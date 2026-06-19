@@ -91,7 +91,6 @@
     }
     .floating-upload-btn:hover .btn-text-wrap { opacity: 1; pointer-events: auto; }
 
-    /* 🔴 [추가됨] 지난 학기 삭제 버튼 (모달 내부) CSS */
     .btn-term-delete {
       height: 34px; max-width: 34px; border-radius: 17px; padding: 0; overflow: hidden; white-space: nowrap; border: none; color: white; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: inline-flex; align-items: center; justify-content: flex-start; transition: max-width 0.2s cubic-bezier(0.4, 0, 0.2, 1), padding 0.2s ease, background-color 0.2s; background-color: #dc3545;
     }
@@ -169,6 +168,7 @@
 </head>
 <body>
 
+  <!-- 플로팅 업로드 버튼 (좌측 하단) -->
   <button class="floating-upload-btn" onclick="openUploadModal()" title="명단 자동 업로드">
     <div class="btn-icon-wrap">+</div>
     <div class="btn-text-wrap">새 학기 명단 업로드</div>
@@ -339,7 +339,6 @@
       "yeongcheon": "https://script.google.com/macros/s/AKfycbxw9tIiVEb95yEtsCc7Zo1HkoYRAZHCi9KyUdhkXDABU_on2zK659EkjMdrlhIh_ZvC/exec"
     };
 
-    // 🔴 [추가됨] 지난 학기 삭제 대상을 판별하기 위한 글로벌 변수
     let globalTermSheets = [];
 
     function createGoogleScriptMock() {
@@ -358,7 +357,7 @@
                 const campus = document.getElementById("campusSelect").value;
                 if (!campus) {
                     if (this.failureCb) this.failureCb(new Error("캠퍼스를 먼저 선택해 주세요."));
-                    else showCustomAlert("· Error: 캠퍼스를 먼저 선택해 주세요.");
+                    else showCustomAlert("캠퍼스를 먼저 선택해 주세요.");
                     return;
                 }
                 const url = CAMPUS_URLS[campus];
@@ -394,7 +393,7 @@
     function checkLockdown(e) {
       if (!document.getElementById("campusSelect").value) {
         if(e) e.preventDefault();
-        showCustomAlert("· Error: 좌측 상단의 [캠퍼스]를 먼저 선택해 주세요.");
+        showCustomAlert("좌측 상단의 [캠퍼스]를 먼저 선택해 주세요.");
         return true;
       }
       return false;
@@ -486,11 +485,11 @@
                             finalizeCampusSwitch(campus, result.data, campusEl);
                         } else {
                             if (isFirstLoad) {
-                                showCustomAlert("· Error: 관리자 코드가 일치하지 않습니다.<br>선생님 모드로 돌아갑니다.", function() {
+                                showCustomAlert("관리자 코드가 일치하지 않습니다.<br>선생님 모드로 돌아갑니다.", function() {
                                     window.location.href = "index.html"; 
                                 });
                             } else {
-                                showCustomAlert("· Error: 관리자 코드가 일치하지 않습니다.");
+                                showCustomAlert("관리자 코드가 일치하지 않습니다.");
                                 campusEl.value = prevCampus; 
                             }
                         }
@@ -539,7 +538,6 @@
 
         globalAcademyName = initialData.academyName; 
         
-        // 🔴 [추가됨] 백엔드에서 전달받은 학기 전체 목록 저장
         globalTermSheets = initialData.termSheets || [];
 
         if (initialData.latestEndDate && initialData.latestEndDate !== "등록된 학기 없음") {
@@ -660,7 +658,7 @@
     function onSearchClick() {
       if(checkLockdown()) return;
       const dateVal = document.getElementById("dateInput").value; const teacher = document.getElementById("teacherSelect").value;
-      if (!dateVal) { showCustomAlert("· Error: 조회할 날짜를 선택해 주세요."); return; }
+      if (!dateVal) { showCustomAlert("조회할 날짜를 선택해 주세요."); return; }
       
       showLoading(true, "체크리스트 데이터를 불러오는 중입니다...");
       google.script.run
@@ -788,7 +786,7 @@
     }
 
     function saveAdminData() {
-      if(adminUpdates.length === 0) { showCustomAlert("· Error: 변경된 관리자 확인 항목이 없습니다."); return; }
+      if(adminUpdates.length === 0) { showCustomAlert("변경된 관리자 확인 항목이 없습니다."); return; }
       
       showLoading(true, "저장 중입니다...");
       google.script.run.withSuccessHandler(function(res) {
@@ -986,13 +984,13 @@
 
         if(!sDate || !eDate || !tName) {
             document.getElementById('fileInput').value = '';
-            showCustomAlert("· Error: 상단의 [시작 날짜], [종료 날짜], [학기]를<br>모두 선택해 주세요.");
+            showCustomAlert("상단의 [시작 날짜], [종료 날짜], [학기]를<br>모두 선택해 주세요.");
             return;
         }
 
         if(sDate > eDate) {
             document.getElementById('fileInput').value = '';
-            showCustomAlert("· Error: 종료 날짜가 시작 날짜보다 빠를 수 없습니다.<br>날짜를 다시 확인해 주세요.");
+            showCustomAlert("종료 날짜가 시작 날짜보다 빠를 수 없습니다.<br>날짜를 다시 확인해 주세요.");
             return;
         }
 
@@ -1090,10 +1088,9 @@
         reader.readAsArrayBuffer(file);
     }
 
-    // 🔴 [추가됨] 지난 학기 명단 삭제 판별 및 실행 로직
     function checkAndDeletePastTerms() {
         if (!globalTermSheets || globalTermSheets.length === 0) {
-            showCustomAlert("· Error: 시스템에 등록된 학기 명단 시트가 없습니다.");
+            showCustomAlert("시스템에 등록된 학기 명단 시트가 없습니다.");
             return;
         }
 
@@ -1106,7 +1103,6 @@
                 let parts = term.end.split('-');
                 let ed = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
                 ed.setHours(0,0,0,0);
-                // 종료일이 오늘보다 과거이면 삭제 대상
                 if (ed < todayD) {
                     pastSheets.push(term.name);
                 }
@@ -1114,7 +1110,7 @@
         });
 
         if (pastSheets.length === 0) {
-            showCustomAlert("· Error: 삭제할 지난 학기 명단 시트가 없습니다.");
+            showCustomAlert("삭제할 지난 학기 명단 시트가 없습니다.");
             return;
         }
 
