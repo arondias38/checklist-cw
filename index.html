@@ -369,7 +369,7 @@
                 const campus = document.getElementById("campusSelect").value;
                 if (!campus) {
                     if (this.failureCb) this.failureCb(new Error("캠퍼스를 먼저 선택해 주세요."));
-                    else showCustomAlert("· Error: 캠퍼스를 먼저 선택해 주세요.");
+                    else showCustomAlert("캠퍼스를 먼저 선택해 주세요.");
                     return;
                 }
                 const url = CAMPUS_URLS[campus];
@@ -439,7 +439,7 @@
     function checkLockdown(e) {
       if (!document.getElementById("campusSelect").value) {
         if(e) e.preventDefault();
-        showCustomAlert("· Error: 좌측 상단의 [캠퍼스]를 먼저 선택해 주세요.");
+        showCustomAlert("좌측 상단의 [캠퍼스]를 먼저 선택해 주세요.");
         return true;
       }
       return false;
@@ -503,8 +503,8 @@
     function promptAdminCode(e) {
       e.preventDefault();
       const campus = document.getElementById("campusSelect").value;
-      if (!campus) { showCustomAlert("· Error: 캠퍼스를 먼저 선택해 주세요."); return; }
-      if (!globalAdminCode) { showCustomAlert("· Error: 코드가 설정되지 않았습니다.<br>관리자에게 문의해 주세요."); return; }
+      if (!campus) { showCustomAlert("캠퍼스를 먼저 선택해 주세요."); return; }
+      if (!globalAdminCode) { showCustomAlert("코드가 설정되지 않았습니다.<br>관리자에게 문의해 주세요."); return; }
       
       let proceedToPrompt = function() {
         showCustomPrompt("관리자 코드를 입력해 주세요.", function(code) {
@@ -513,7 +513,7 @@
              sessionStorage.setItem('auth_campus_' + campus, 'true'); 
              window.location.href = "Admin.html?campus=" + campus;
           } 
-          else { showCustomAlert("· Error: 관리자 코드가 일치하지 않습니다."); }
+          else { showCustomAlert("관리자 코드가 일치하지 않습니다."); }
         });
       };
 
@@ -584,7 +584,6 @@
            let opt = document.createElement("option"); 
            opt.value = item.name; 
            
-           // 🔴 [추가됨] 과거/미래 학기 상태별 텍스트 및 색상 차등 적용
            let dispName = item.name;
            if(item.details.status === "past") dispName += " (지난 학기)";
            else if(item.details.status === "future") dispName += " (예정 학기)";
@@ -602,7 +601,6 @@
       }).getClassesForTeacher(teacher); 
     }
 
-    // 🔴 [추가됨] 반명 선택 시 스마트 팝업 방어 로직 연동
     function handleClassChange(el) {
         let attemptVal = el.value;
         let prevVal = el.dataset.prev || "";
@@ -641,7 +639,6 @@
     function finalizeClassChange(val) {
         const classSelect = document.getElementById("classSelect");
         classSelect.dataset.prev = val;
-        // 🔴 폰트 색상 옅게 적용
         if(classMetaSchedule[val].status !== "current") {
             classSelect.style.color = "#b0b0b0"; 
         } else {
@@ -703,7 +700,7 @@
 
     function onSearchClick() {
       const teacher = document.getElementById("teacherSelect").value; const className = document.getElementById("classSelect").value; const dateVal = document.getElementById("dateInput").value;
-      if (!teacher || !className || !dateVal) { showCustomAlert("· Error: 담임명, 반명, 날짜를 모두 선택해 주세요."); return; }
+      if (!teacher || !className || !dateVal) { showCustomAlert("담임명, 반명, 날짜를 모두 선택해 주세요."); return; }
       
       const dayNum = new Date(dateVal).getDay(); 
       const isM = /(M)([012])/.test(className); const isTS = /(TS)(1|2)/.test(className); const isT = /(?<!S)(T)([012])/.test(className); const isS = /(?<!T)(S)(1|2)/.test(className);
@@ -1075,7 +1072,7 @@
 
     function saveData() {
       const teacher = document.getElementById("teacherSelect").value; const date = document.getElementById("dateInput").value; const className = document.getElementById("classSelect").value;
-      if(studentList.length === 0) { showCustomAlert("· Error: 저장할 데이터가 없습니다."); return; }
+      if(studentList.length === 0) { showCustomAlert("저장할 데이터가 없습니다."); return; }
       
       const emptyNew = studentList.filter(st => st.isNew && st.name.trim() === "");
       if (emptyNew.length > 0) { 
