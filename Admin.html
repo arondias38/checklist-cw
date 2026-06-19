@@ -90,6 +90,15 @@
       transition: opacity 0.2s; transition-delay: 0.05s; pointer-events: none;
     }
     .floating-upload-btn:hover .btn-text-wrap { opacity: 1; pointer-events: auto; }
+
+    /* 🔴 [추가됨] 지난 학기 삭제 버튼 (모달 내부) CSS */
+    .btn-term-delete {
+      height: 34px; max-width: 34px; border-radius: 17px; padding: 0; overflow: hidden; white-space: nowrap; border: none; color: white; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: inline-flex; align-items: center; justify-content: flex-start; transition: max-width 0.2s cubic-bezier(0.4, 0, 0.2, 1), padding 0.2s ease, background-color 0.2s; background-color: #dc3545;
+    }
+    .btn-term-delete:hover { max-width: 150px; padding-right: 15px; background-color: #c82333; }
+    .btn-term-delete .btn-icon-wrap { width: 34px; height: 34px; display: inline-flex; justify-content: center; align-items: center; flex-shrink: 0; font-size: 18px; font-weight: 900; line-height: 0; padding-bottom: 2px; }
+    .btn-term-delete .btn-text-wrap { opacity: 0; transition: opacity 0.1s ease-in; }
+    .btn-term-delete:hover .btn-text-wrap { opacity: 1; transition-delay: 0.05s; }
     
     .app-body { padding: 20px; }
     
@@ -181,7 +190,7 @@
 
   <div class="modal-overlay" id="uploadModalOverlay">
     <div class="modal-box" style="width: 480px; padding: 25px;">
-      <div style="font-size: 18px; font-weight: 900; background-color: #1366ce; color: white; padding: 14px 0; border-radius: 12px; margin-bottom: 15px;">새 학기 명단 자동 업로드</div>
+      <div style="font-size: 18px; font-weight: 900; background-color: #1366ce; color: white; padding: 14px 0; border-radius: 12px; margin-bottom: 15px;">새 학기 명단 업로드</div>
       <div id="latestTermInfo" style="font-size: 13px; color: #dc3545; font-weight: bold; margin-bottom: 25px;">📌 최근 등록된 학기 종료일: 확인 중...</div>
 
       <div style="display: flex; gap: 15px; margin-bottom: 15px; text-align: left;">
@@ -211,7 +220,7 @@
          </select>
       </div>
 
-      <div id="dropZone" style="border: 2px dashed #1366ce; border-radius: 8px; padding: 40px 15px; background-color: #f8f9fa; cursor: pointer; transition: 0.2s; margin-bottom:25px;">
+      <div id="dropZone" style="border: 2px dashed #1366ce; border-radius: 8px; padding: 40px 15px; background-color: #f8f9fa; cursor: pointer; transition: 0.2s; margin-bottom:20px;">
          <div style="font-size:32px; margin-bottom:10px;">📂</div>
          <div style="font-size:15px; font-weight:bold; color:#1366ce; margin-bottom:8px;">엑셀 파일을 이곳에 끌어다 놓거나 클릭하세요.</div>
          <div style="font-size:12px; color:#888; line-height: 1.4;">
@@ -222,9 +231,16 @@
          <input type="file" id="fileInput" accept=".xlsx, .xls" style="display:none;">
       </div>
 
-      <div class="modal-buttons">
+      <div class="modal-buttons" style="margin-bottom: 15px;">
         <button class="modal-btn btn-no" onclick="closeUploadModal()">취소</button>
       </div>
+      
+      <div style="border-top: 1px solid #eaeaea; padding-top: 15px; display: flex; justify-content: flex-start;">
+         <button class="btn-term-delete" onclick="checkAndDeletePastTerms()" title="지난 학기 명단 삭제">
+            <span class="btn-icon-wrap">&minus;</span><span class="btn-text-wrap">지난 학기 명단 삭제</span>
+         </button>
+      </div>
+
     </div>
   </div>
 
@@ -317,12 +333,14 @@
   </div>
 
   <script>
-    // 🔴 [사용자 요청 적용] 새로운 웹앱 URL 적용
     const CAMPUS_URLS = {
       "yeongtong": "https://script.google.com/macros/s/AKfycbzVdG6stb-OvSnFEzFm34L_4HcMr0C-hsU9xCgzp_1W0AJcsn1ykbrsq7SmWcwwaTDG/exec",
       "dongtan": "https://script.google.com/macros/s/AKfycbzRcme0LEJ5O3PEqjekUkGSA-zBl_a1Kgb1aLR85A9DBIOA8G-u8uGWAMbx1ThLLw4ITQ/exec",
       "yeongcheon": "https://script.google.com/macros/s/AKfycbxw9tIiVEb95yEtsCc7Zo1HkoYRAZHCi9KyUdhkXDABU_on2zK659EkjMdrlhIh_ZvC/exec"
     };
+
+    // 🔴 [추가됨] 지난 학기 삭제 대상을 판별하기 위한 글로벌 변수
+    let globalTermSheets = [];
 
     function createGoogleScriptMock() {
         return {
@@ -334,6 +352,7 @@
             getStudentHistory: function(teacherName, className, studentName, dateStr) { this._fetch('getStudentHistory', {teacherName, className, studentName, dateStr}); },
             getTeacherMatrixHistory: function(payload) { this._fetch('getTeacherMatrixHistory', payload); },
             uploadNewTerm: function(payload) { this._fetch('uploadNewTerm', payload); }, 
+            deletePastTerms: function(payload) { this._fetch('deletePastTerms', payload); }, 
             
             _fetch: async function(action, payload = {}) {
                 const campus = document.getElementById("campusSelect").value;
@@ -520,6 +539,9 @@
 
         globalAcademyName = initialData.academyName; 
         
+        // 🔴 [추가됨] 백엔드에서 전달받은 학기 전체 목록 저장
+        globalTermSheets = initialData.termSheets || [];
+
         if (initialData.latestEndDate && initialData.latestEndDate !== "등록된 학기 없음") {
             globalLatestEndDate = formatDateWithDay(initialData.latestEndDate);
         } else {
@@ -1066,6 +1088,55 @@
             }
         };
         reader.readAsArrayBuffer(file);
+    }
+
+    // 🔴 [추가됨] 지난 학기 명단 삭제 판별 및 실행 로직
+    function checkAndDeletePastTerms() {
+        if (!globalTermSheets || globalTermSheets.length === 0) {
+            showCustomAlert("· Error: 시스템에 등록된 학기 명단 시트가 없습니다.");
+            return;
+        }
+
+        let todayD = new Date();
+        todayD.setHours(0,0,0,0);
+
+        let pastSheets = [];
+        globalTermSheets.forEach(term => {
+            if (term.end) {
+                let parts = term.end.split('-');
+                let ed = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+                ed.setHours(0,0,0,0);
+                // 종료일이 오늘보다 과거이면 삭제 대상
+                if (ed < todayD) {
+                    pastSheets.push(term.name);
+                }
+            }
+        });
+
+        if (pastSheets.length === 0) {
+            showCustomAlert("· Error: 삭제할 지난 학기 명단 시트가 없습니다.");
+            return;
+        }
+
+        let sheetListHtml = pastSheets.map(name => `• ${name}`).join('<br>');
+        showCustomConfirm(`지난 학기의 반 명단을 모두 삭제할까요?<br><br><div style="text-align:left; background:#f4f5f7; padding:10px; border-radius:6px; font-size:13px; max-height:100px; overflow-y:auto;"><b>[삭제 대상 시트]</b><br>${sheetListHtml}</div>`, function() {
+            
+            closeUploadModal();
+            showLoading(true, "지난 학기 명단을 삭제 중입니다...");
+            
+            google.script.run
+                .withSuccessHandler(function(count) {
+                    showLoading(false);
+                    showCustomAlert(`✔ <b>삭제 완료!</b><br>총 ${count}개의 지난 학기 명단이 삭제되었습니다.<br>새로고침(F5) 후 사용해 주세요.`, function() {
+                       window.location.reload(); 
+                    });
+                })
+                .withFailureHandler(function(err) {
+                    showLoading(false);
+                    showCustomAlert("· Error: 삭제 중 오류가 발생했습니다.<br>(" + err.message.replace(/^Error:\s*/, '').trim() + ")");
+                })
+                .deletePastTerms({ sheetNames: pastSheets });
+        });
     }
 
     window.addEventListener('keydown', function(e) {
