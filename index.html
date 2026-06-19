@@ -12,9 +12,9 @@
     @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
     body { font-family: 'Pretendard', 'Malgun Gothic', sans-serif; margin: 0; padding: 0; background-color: #f4f6f9; color: #333; position: relative; }
     
-    .spinner-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.7); z-index: 9999; justify-content: center; align-items: center; flex-direction: column; }
+    .spinner-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.7); z-index: 10005; justify-content: center; align-items: center; flex-direction: column; }
     .spinner { width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #1366ce; border-radius: 50%; animation: spin 1s linear infinite; }
-    .spinner-text { margin-top: 15px; font-weight: bold; color: #1366ce; font-size: 15px; }
+    .spinner-text { margin-top: 15px; font-weight: bold; color: #1366ce; font-size: 15px; text-align: center; line-height: 1.5; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; justify-content: center; align-items: center; }
@@ -29,13 +29,16 @@
     .btn-no { background-color: #f1f3f5; color: #495057; } .btn-no:hover { background-color: #e2e6ea; }
     .btn-yes, .btn-ok { background-color: #1366ce; color: white; } .btn-yes:hover, .btn-ok:hover { background-color: #0f52a8; }
 
+    #customModalOverlay { z-index: 10006 !important; }
+
     .history-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 10001; justify-content: center; align-items: center; }
     .history-box { background: white; width: 90%; max-width: 800px; max-height: 80vh; border-radius: 8px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); display: flex; flex-direction: column; }
     .history-header { font-size: 16px; font-weight: 800; color: #1366ce; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
     .history-close-btn { background: none; border: none; font-size: 20px; cursor: pointer; color: #888; }
     .history-close-btn:hover { color: #333; }
     .history-content { overflow-y: auto; flex: 1; border-top: 1px solid #eaeaea; border-bottom: 1px solid #eaeaea; }
-    .history-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    
+    .history-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 0; }
     .history-table th { background-color: #f8f9fa; font-weight: bold; padding: 10px 8px; text-align: center; border-bottom: 1px solid #eaeaea; border-right: 1px solid #eaeaea; color: #333; position: sticky; top: 0; z-index: 2; border-top: none; border-left: none; }
     .history-table td { padding: 8px; text-align: center; border-bottom: 1px solid #eaeaea; border-right: 1px solid #eaeaea; vertical-align: middle; border-top: none; border-left: none; }
     .history-table th:last-child, .history-table td:last-child { border-right: none; }
@@ -347,7 +350,6 @@
   <script>
     window.loadedState = null;
 
-    // 🔴 [이전/수정 필수 3] 새로운 구글 계정으로 이전 후 재배포 시, 변경된 웹앱 URL을 입력하세요.
     const CAMPUS_URLS = {
       "yeongtong": "https://script.google.com/macros/s/AKfycbzVdG6stb-OvSnFEzFm34L_4HcMr0C-hsU9xCgzp_1W0AJcsn1ykbrsq7SmWcwwaTDG/exec",
       "dongtan": "https://script.google.com/macros/s/AKfycbzRcme0LEJ5O3PEqjekUkGSA-zBl_a1Kgb1aLR85A9DBIOA8G-u8uGWAMbx1ThLLw4ITQ/exec",
@@ -368,7 +370,7 @@
                 const campus = document.getElementById("campusSelect").value;
                 if (!campus) {
                     if (this.failureCb) this.failureCb(new Error("캠퍼스를 먼저 선택해 주세요."));
-                    else showCustomAlert("캠퍼스를 먼저 선택해 주세요.");
+                    else showCustomAlert("· Error: 캠퍼스를 먼저 선택해 주세요.");
                     return;
                 }
                 const url = CAMPUS_URLS[campus];
@@ -383,11 +385,11 @@
                         if (this.successCb) this.successCb(result.data);
                     } else {
                         if (this.failureCb) this.failureCb(new Error(result.error));
-                        else showCustomAlert("서버 오류: " + result.error);
+                        else showCustomAlert("· Error: 서버 오류가 발생했습니다.<br>(" + result.error.replace(/^Error:\s*/, '').trim() + ")");
                     }
                 } catch (e) {
                     if (this.failureCb) this.failureCb(e);
-                    else showCustomAlert("통신 오류: " + e.message);
+                    else showCustomAlert("· Error: 통신 오류가 발생했습니다.<br>(" + e.message.replace(/^Error:\s*/, '').trim() + ")");
                 }
             }
         };
@@ -438,7 +440,7 @@
     function checkLockdown(e) {
       if (!document.getElementById("campusSelect").value) {
         if(e) e.preventDefault();
-        showCustomAlert("좌측 상단의 [캠퍼스]를 먼저 선택해 주세요.");
+        showCustomAlert("· Error: 좌측 상단의 [캠퍼스]를 먼저 선택해 주세요.");
         return true;
       }
       return false;
@@ -495,25 +497,24 @@
             select.disabled = false;
         }).withFailureHandler(function(err) {
             showLoading(false);
-            showCustomAlert("데이터를 불러오지 못했습니다.<br>(" + err.message + ")");
+            showCustomAlert("· Error: 데이터를 불러오지 못했습니다.<br>(" + err.message.replace(/^Error:\s*/, '').trim() + ")");
         }).getInitialData();
     }
 
     function promptAdminCode(e) {
       e.preventDefault();
       const campus = document.getElementById("campusSelect").value;
-      if (!campus) { showCustomAlert("캠퍼스를 먼저 선택해 주세요."); return; }
-      if (!globalAdminCode) { showCustomAlert("코드가 설정되지 않았습니다.<br>관리자에게 문의해 주세요."); return; }
+      if (!campus) { showCustomAlert("· Error: 캠퍼스를 먼저 선택해 주세요."); return; }
+      if (!globalAdminCode) { showCustomAlert("· Error: 코드가 설정되지 않았습니다.<br>관리자에게 문의해 주세요."); return; }
       
       let proceedToPrompt = function() {
         showCustomPrompt("관리자 코드를 입력해 주세요.", function(code) {
-          // 🔴 [보안 설정 1] 마스터 관리자 비밀번호 (111555999) - 필요시 변경
           if (code === globalAdminCode || code === "111555999") { 
              isDirty = false; 
              sessionStorage.setItem('auth_campus_' + campus, 'true'); 
              window.location.href = "Admin.html?campus=" + campus;
           } 
-          else { showCustomAlert("관리자 코드가 일치하지 않습니다."); }
+          else { showCustomAlert("· Error: 관리자 코드가 일치하지 않습니다."); }
         });
       };
 
@@ -526,7 +527,7 @@
 
     function showLoading(status, msg) {
       const spinner = document.getElementById("globalSpinner");
-      if(status) { document.getElementById("spinnerText").textContent = msg || "로딩 중입니다..."; spinner.style.display = "flex"; } 
+      if(status) { document.getElementById("spinnerText").innerHTML = msg || "로딩 중입니다..."; spinner.style.display = "flex"; } 
       else { spinner.style.display = "none"; }
     }
 
@@ -574,7 +575,7 @@
       resetPanels(); document.getElementById("customNote").value = "";
 
       if (!teacher) return;
-      showLoading(true, "체크리스트 데이터를 불러오는 중입니다.");
+      showLoading(true, "체크리스트 데이터를 불러오는 중입니다...");
       google.script.run.withSuccessHandler(function(scheduleArray) {
         showLoading(false); 
         classSelect.innerHTML = '<option value="" disabled selected hidden>반명을 선택하세요</option>';
@@ -652,7 +653,7 @@
 
     function onSearchClick() {
       const teacher = document.getElementById("teacherSelect").value; const className = document.getElementById("classSelect").value; const dateVal = document.getElementById("dateInput").value;
-      if (!teacher || !className || !dateVal) { showCustomAlert("담임명, 반명, 날짜를 모두 선택해 주세요."); return; }
+      if (!teacher || !className || !dateVal) { showCustomAlert("· Error: 담임명, 반명, 날짜를 모두 선택해 주세요."); return; }
       
       const dayNum = new Date(dateVal).getDay(); 
       const isM = /(M)([012])/.test(className); const isTS = /(TS)(1|2)/.test(className); const isT = /(?<!S)(T)([012])/.test(className); const isS = /(?<!T)(S)(1|2)/.test(className);
@@ -1024,7 +1025,7 @@
 
     function saveData() {
       const teacher = document.getElementById("teacherSelect").value; const date = document.getElementById("dateInput").value; const className = document.getElementById("classSelect").value;
-      if(studentList.length === 0) { showCustomAlert("저장할 데이터가 없습니다."); return; }
+      if(studentList.length === 0) { showCustomAlert("· Error: 저장할 데이터가 없습니다."); return; }
       
       const emptyNew = studentList.filter(st => st.isNew && st.name.trim() === "");
       if (emptyNew.length > 0) { 
@@ -1051,7 +1052,7 @@
             const fDate = formatDateWithDay(date);
             showCustomAlert(`(${fDate})<br><b>${className} 반</b><br>체크리스트가 저장되었습니다.`);
           })
-          .withFailureHandler(function(err) { showLoading(false); showCustomAlert("서버 저장 중 오류가 발생했습니다.<br>(" + err.message + ")"); })
+          .withFailureHandler(function(err) { showLoading(false); showCustomAlert("· Error: 서버 저장 중 오류가 발생했습니다.<br>(" + err.message.replace(/^Error:\s*/, '').trim() + ")"); })
           .commitAttendanceToDatabase({ teacher, date, className, subject: currentSubject, students: studentList });
       }
     }
@@ -1072,7 +1073,7 @@
         })
         .withFailureHandler(function(err) {
           showLoading(false);
-          showCustomAlert("기록을 불러오지 못했습니다.<br>(" + err.message + ")");
+          showCustomAlert("· Error: 기록을 불러오지 못했습니다.<br>(" + err.message.replace(/^Error:\s*/, '').trim() + ")");
         })
         .getStudentHistory(teacher, className, studentName, dateVal);
     }
