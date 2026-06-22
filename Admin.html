@@ -164,6 +164,15 @@
     
     input[type="checkbox"] { transform: scale(1.3); cursor: pointer; margin: 4px 2px; }
     .master-checkbox { transform: scale(1.3); margin-top: 12px; cursor: pointer; }
+
+    /* 🔴 명단 수정 팝업 내부 전용 CSS */
+    .term-row { display: flex; align-items: center; gap: 8px; background: white; padding: 10px; border-radius: 8px; margin-bottom: 8px; border: 1px solid #ced4da; transition: 0.2s; }
+    .term-row.deleted { opacity: 0.6; filter: grayscale(50%); border-color: #dc3545; }
+    .term-del-btn { background-color: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+    .term-del-btn.active { background-color: #8b0000; box-shadow: inset 0 3px 5px rgba(0,0,0,0.3); }
+    .term-input { padding: 6px; border: 1px solid #ced4da; border-radius: 4px; font-size: 13px; font-family: 'Pretendard', sans-serif; outline: none; }
+    .term-input:disabled { background-color: #e9ecef; color: #6c757d; }
+    .term-input:focus { border-color: #1366ce; }
   </style>
 </head>
 <body>
@@ -218,6 +227,14 @@
          </div>
       </div>
 
+      <div style="text-align: left; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #eaeaea;">
+         <div style="font-size:14px; font-weight:bold; color:#333; margin-bottom:10px;">📋 특정 학기 명단 수정 및 삭제</div>
+         <div style="font-size:12px; color:#666; margin-bottom:10px; line-height:1.4;">선택한 학기의 명단 파일을 수정 또는 삭제 합니다.<br>(<span style="color:#dc3545; font-weight:bold;">※ 명단 파일을 삭제 후에는 복구가 불가능 합니다.</span>)</div>
+         <div style="display: flex; justify-content: flex-end;">
+           <button class="modal-btn btn-ok" style="border-radius: 50px; padding: 8px 15px; width:auto; flex:none;" onclick="openTermManageModal()">명단 수정 / 삭제</button>
+         </div>
+      </div>
+
       <div style="text-align: left; margin-bottom: 20px;">
          <div style="font-size:14px; font-weight:bold; color:#333; margin-bottom:10px;">💾 데이터 통합 백업 및 삭제</div>
          <div style="font-size:12px; color:#666; margin-bottom:10px; line-height:1.4;">오늘 기준 <b>1년 전</b> 과거 데이터를 추출하여 새로운 파일로 백업하고,<br>원본 파일에서는 해당 기록들을 영구 삭제하여 용량을 최적화합니다.<br>(※ 백업 후, 삭제 여부를 결정할 수 있으며 <span style="color:#dc3545; font-weight:bold;">삭제된 학기는 추후 조회가 불가능</span>합니다.)</div>
@@ -229,6 +246,23 @@
       <div class="modal-buttons">
         <button class="modal-btn btn-no" style="flex:none; min-width:120px; border-radius: 50px; padding: 10px 20px;" onclick="closeSettingsModal()">닫기</button>
       </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="termManageModalOverlay" style="z-index: 10001;">
+    <div class="modal-box" style="width: 650px; padding: 0; max-height: 80vh; overflow: hidden; display: flex; flex-direction: column; background-color: #f4f6f9;">
+      
+      <div style="background-color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ced4da; box-shadow: 0 2px 4px rgba(0,0,0,0.05); z-index: 10;">
+        <div style="font-size: 16px; font-weight: 900; color: #1a3978;">📋 특정 학기 명단 관리</div>
+        <div style="display: flex; gap: 10px;">
+          <button class="modal-btn btn-no" style="padding: 6px 15px; font-size: 13px;" onclick="closeTermManageModal()">닫기</button>
+          <button class="modal-btn btn-ok" style="padding: 6px 20px; font-size: 14px;" onclick="applyTermChanges()">적용</button>
+        </div>
+      </div>
+      
+      <div id="termManageContent" style="flex: 1; overflow-y: auto; padding: 15px 20px;">
+        </div>
+      
     </div>
   </div>
 
@@ -379,6 +413,10 @@
     let globalTermSheets = [];
     let currentBackupPayload = null;
 
+    // 🔴 [추가됨] 명단 관리 전용 변수 캐싱
+    let termManageData = [];
+    let termModifications = {};
+
     function createGoogleScriptMock() {
         return {
             withSuccessHandler: function(successCb) { this.successCb = successCb; return this; },
@@ -394,6 +432,10 @@
             saveSettings: function(payload) { this._fetch('saveSettings', payload); },
             apiIntegratedBackup: function() { this._fetch('apiIntegratedBackup'); },
             apiIntegratedDelete: function(payload) { this._fetch('apiIntegratedDelete', payload); },
+            
+            // 🔴 [추가됨] 백엔드 명단 수정/삭제 API 연동
+            getTermListForEdit: function() { this._fetch('getTermListForEdit'); },
+            applyTermModifications: function(payload) { this._fetch('applyTermModifications', payload); },
             
             _fetch: async function(action, payload = {}) {
                 const campus = document.getElementById("campusSelect").value;
@@ -988,7 +1030,6 @@
         }
     }
 
-    // 🔴 ⚙️ 환경설정 관련 3구역 프론트엔드 로직
     function openSettingsModal() {
         if(checkLockdown()) return;
         document.getElementById('settingsModalOverlay').style.display = 'flex';
@@ -1007,7 +1048,6 @@
         document.getElementById('settingsModalOverlay').style.display = 'none';
     }
 
-    // 🔴 1구역: 관리자 코드 저장 로직
     function saveAdminCodeSetting() {
         let code = document.getElementById('settingAdminCode').value.trim();
         if(code === "") { showCustomAlert("관리자 코드를 입력해 주세요."); return; }
@@ -1022,7 +1062,6 @@
         }).saveSettings({ adminCode: code });
     }
 
-    // 🔴 2구역: 지난 학기 표시 일정 저장 로직
     function savePastDaysSetting() {
         let days = document.getElementById('settingPastDays').value;
         if(days === "" || days < 0) { showCustomAlert("올바른 일수(숫자)를 입력해 주세요."); return; }
@@ -1037,7 +1076,157 @@
         }).saveSettings({ pastTermDays: days });
     }
 
-    // 🔴 3구역: 1년 전 과거 데이터 통합 백업 및 삭제 로직
+    // 🔴 [추가됨] 명단 관리(수정/삭제) 모달 오픈 및 로직
+    function openTermManageModal() {
+        if(checkLockdown()) return;
+        document.getElementById('settingsModalOverlay').style.display = 'none'; 
+        document.getElementById('termManageModalOverlay').style.display = 'flex';
+        showLoading(true, "명단 목록을 불러오는 중입니다...");
+        
+        google.script.run.withSuccessHandler(function(res) {
+            showLoading(false);
+            termManageData = res;
+            termModifications = {};
+            renderTermManageList();
+        }).withFailureHandler(function(err){
+            showLoading(false);
+            showCustomAlert("· Error: 명단 목록을 불러오지 못했습니다.<br>(" + err.message.replace(/^Error:\s*/, '').trim() + ")");
+        }).getTermListForEdit();
+    }
+    
+    function closeTermManageModal() {
+        document.getElementById('termManageModalOverlay').style.display = 'none';
+    }
+
+    function renderTermManageList() {
+        const container = document.getElementById('termManageContent');
+        container.innerHTML = "";
+        
+        if(termManageData.length === 0) {
+            container.innerHTML = '<div style="padding: 40px; text-align:center; color:#888; font-weight:bold;">등록된 학기 명단이 없습니다.</div>';
+            return;
+        }
+
+        let html = "";
+        termManageData.forEach((term, idx) => {
+            let isDeleted = termModifications[idx] && termModifications[idx].isDeleted;
+            let rowClass = isDeleted ? "term-row deleted" : "term-row";
+            let btnClass = isDeleted ? "term-del-btn active" : "term-del-btn";
+            let btnText = isDeleted ? "삭제 대기" : "삭제";
+            
+            let isChecked = termModifications[idx] ? true : false;
+            let nameVal = isChecked && termModifications[idx].newName ? termModifications[idx].newName : term.name;
+            let startVal = isChecked && termModifications[idx].newStart ? termModifications[idx].newStart : term.start;
+            let endVal = isChecked && termModifications[idx].newEnd ? termModifications[idx].newEnd : term.end;
+
+            let disableInputs = !isChecked || isDeleted ? "disabled" : "";
+
+            html += `<div class="${rowClass}" id="termRow_${idx}">
+                <input type="checkbox" onchange="toggleTermEdit(this, ${idx})" style="transform: scale(1.3); margin:0 5px;" ${isChecked ? 'checked' : ''} ${isDeleted ? 'disabled' : ''}>
+                <input type="text" class="term-input" id="editName_${idx}" value="${nameVal}" ${disableInputs} style="flex: 2;" oninput="updateTermMod(${idx}, 'newName', this.value)">
+                <input type="date" class="term-input" id="editStart_${idx}" value="${startVal}" ${disableInputs} style="flex: 1.5;" onchange="updateTermMod(${idx}, 'newStart', this.value)">
+                <input type="date" class="term-input" id="editEnd_${idx}" value="${endVal}" ${disableInputs} style="flex: 1.5;" onchange="updateTermMod(${idx}, 'newEnd', this.value)">
+                <button class="${btnClass}" id="delBtn_${idx}" onclick="markTermDelete(${idx})">${btnText}</button>
+            </div>`;
+        });
+        container.innerHTML = html;
+    }
+
+    function toggleTermEdit(cb, idx) {
+        let isChecked = cb.checked;
+        document.getElementById(`editName_${idx}`).disabled = !isChecked;
+        document.getElementById(`editStart_${idx}`).disabled = !isChecked;
+        document.getElementById(`editEnd_${idx}`).disabled = !isChecked;
+        
+        if (isChecked) {
+            if(!termModifications[idx]) termModifications[idx] = { originalName: termManageData[idx].name };
+            termModifications[idx].newName = document.getElementById(`editName_${idx}`).value;
+            termModifications[idx].newStart = document.getElementById(`editStart_${idx}`).value;
+            termModifications[idx].newEnd = document.getElementById(`editEnd_${idx}`).value;
+        } else {
+            if(termModifications[idx]) {
+                delete termModifications[idx].newName;
+                delete termModifications[idx].newStart;
+                delete termModifications[idx].newEnd;
+                if(!termModifications[idx].isDeleted) delete termModifications[idx];
+            }
+            document.getElementById(`editName_${idx}`).value = termManageData[idx].name;
+            document.getElementById(`editStart_${idx}`).value = termManageData[idx].start;
+            document.getElementById(`editEnd_${idx}`).value = termManageData[idx].end;
+        }
+    }
+
+    function updateTermMod(idx, field, val) {
+        if(!termModifications[idx]) termModifications[idx] = { originalName: termManageData[idx].name };
+        termModifications[idx][field] = val;
+    }
+
+    function markTermDelete(idx) {
+        let termName = termManageData[idx].name;
+        let isCurrentlyDeleted = termModifications[idx] && termModifications[idx].isDeleted;
+
+        if (isCurrentlyDeleted) {
+            termModifications[idx].isDeleted = false;
+            renderTermManageList(); 
+        } else {
+            showCustomConfirm(`<b>[${termName}]</b> 명단을 삭제하시겠습니까?<br>(상단의 적용 버튼을 눌러야 최종 적용 됩니다.)`, function() {
+                if(!termModifications[idx]) termModifications[idx] = { originalName: termManageData[idx].name };
+                termModifications[idx].isDeleted = true;
+                renderTermManageList(); 
+            });
+        }
+    }
+
+    function applyTermChanges() {
+        let mods = Object.values(termModifications);
+        if(mods.length === 0) {
+            showCustomAlert("수정 또는 삭제된 항목이 없습니다.");
+            return;
+        }
+
+        let existingNames = termManageData.map(t => t.name);
+        let finalNames = [...existingNames];
+        
+        for(let mod of mods) {
+            if(mod.isDeleted) {
+                finalNames = finalNames.filter(n => n !== mod.originalName);
+                continue; 
+            }
+            if(mod.newName && mod.newName !== mod.originalName) {
+                if(existingNames.includes(mod.newName)) {
+                    showCustomAlert(`'${mod.newName}'은(는) 이미 존재하는 명단 이름입니다.<br>다른 이름으로 수정해 주세요.`);
+                    return;
+                }
+                let idx = finalNames.indexOf(mod.originalName);
+                if(idx !== -1) finalNames[idx] = mod.newName;
+            }
+            let sD = mod.newStart || termManageData.find(t=>t.name === mod.originalName).start;
+            let eD = mod.newEnd || termManageData.find(t=>t.name === mod.originalName).end;
+            if(sD > eD) {
+                let n = mod.newName || mod.originalName;
+                showCustomAlert(`[${n}]의 종료 날짜가 시작 날짜보다 빠를 수 없습니다.`);
+                return;
+            }
+        }
+
+        if(new Set(finalNames).size !== finalNames.length) {
+            showCustomAlert("수정할 명단 이름에 중복이 존재합니다.<br>각 시트는 고유한 이름을 가져야 합니다.");
+            return;
+        }
+
+        showLoading(true, "변경 사항을 일괄 적용 중입니다...");
+        google.script.run.withSuccessHandler(function() {
+            showLoading(false);
+            closeTermManageModal();
+            showCustomAlert("✔ <b>적용 완료!</b><br>명단 수정 및 삭제가 성공적으로 반영되었습니다.", function() {
+                window.location.reload(); 
+            });
+        }).withFailureHandler(function(err){
+            showLoading(false);
+            showCustomAlert("· Error: 변경 사항 적용에 실패했습니다.<br>(" + err.message.replace(/^Error:\s*/, '').trim() + ")");
+        }).applyTermModifications(mods);
+    }
+
     function runIntegratedBackup() {
         showCustomConfirm("오늘 기준 <b>1년 전</b> 과거 데이터를<br>통합 백업하시겠습니까?", function() {
             closeSettingsModal();
@@ -1228,6 +1417,7 @@
     window.addEventListener('keydown', function(e) {
       const modal = document.getElementById('customModalOverlay');
       const settingModal = document.getElementById('settingsModalOverlay');
+      const termManageModal = document.getElementById('termManageModalOverlay');
       
       if (e.key === 'Escape') {
           const matrixOverlay = document.getElementById('matrixOverlay');
@@ -1241,6 +1431,9 @@
           const uploadOverlay = document.getElementById('uploadModalOverlay');
           if (uploadOverlay && uploadOverlay.style.display === 'flex') {
               closeUploadModal(); return;
+          }
+          if (termManageModal && termManageModal.style.display === 'flex') {
+              closeTermManageModal(); return;
           }
           if (settingModal && settingModal.style.display === 'flex') {
               closeSettingsModal(); return;
