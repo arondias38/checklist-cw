@@ -27,7 +27,7 @@
     .prompt-input:focus { border-color: #1366ce; box-shadow: 0 0 0 3px rgba(19,102,206,0.2); }
     
     .modal-buttons { display: flex; justify-content: center; gap: 10px; }
-    .modal-btn { padding: 10px 20px; border: none; border-radius: 50px; font-weight: bold; font-size: 14px; cursor: pointer; flex: 1; transition: 0.2s; }
+    .modal-btn { padding: 10px 20px; border: none; border-radius: 50px; font-weight: bold; font-size: 14px; cursor: flex; 1; transition: 0.2s; }
     .btn-ok { background-color: #1366ce; color: white; } .btn-ok:hover { background-color: #0f52a8; }
     .btn-no { background-color: #f1f3f5; color: #495057; } .btn-no:hover { background-color: #e2e6ea; }
     .btn-yes { background-color: #1366ce; color: white; } .btn-yes:hover { background-color: #0f52a8; }
@@ -67,11 +67,11 @@
     .academy-header-bar { margin-top: 15px; background-color: #495057; color: #ffffff; padding: 10px 25px; font-size: 18px; font-weight: bold; letter-spacing: 0.5px; box-shadow: 0 2px 5px rgba(0,0,0,0.15); display: flex; justify-content: center; align-items: center; position: relative; }
     .academy-header-bar a { position: absolute; right: 25px; }
     
-    /* 🔴 [추가/수정됨] 플로팅 버튼을 상하로 배치 (위: 환경설정 / 아래: 업로드) */
-    .floating-btn-container { position: fixed; bottom: 35px; left: 35px; z-index: 9999; display: flex; flex-direction: column; gap: 15px; }
+    /* 🔴 [수정됨] 플로팅 버튼을 좌우로 배치 (좌: 환경설정 / 우: 업로드), 크기/위치 축소 */
+    .floating-btn-container { position: fixed; bottom: 25px; left: 25px; z-index: 9999; display: flex; flex-direction: row; gap: 12px; }
 
     .floating-setting-btn, .floating-upload-btn {
-      height: 40px; width: 40px; border-radius: 20px;
+      height: 36px; width: 36px; border-radius: 18px;
       color: white; border: none;
       box-shadow: 0 4px 10px rgba(0,0,0,0.25); cursor: pointer;
       display: flex; align-items: center; justify-content: center;
@@ -81,21 +81,21 @@
     .floating-setting-btn { background-color: #6c757d; }
     .floating-upload-btn { background-color: #28a745; }
 
-    .floating-setting-btn:hover { width: 110px; background-color: #5a6268; border-radius: 20px; }
-    .floating-upload-btn:hover { width: 155px; background-color: #218838; border-radius: 20px; }
+    .floating-setting-btn:hover { width: 95px; background-color: #5a6268; border-radius: 18px; }
+    .floating-upload-btn:hover { width: 145px; background-color: #218838; border-radius: 18px; }
 
     .floating-setting-btn .btn-icon-wrap, .floating-upload-btn .btn-icon-wrap {
       position: absolute; left: 0; top: 0; display: flex; align-items: center; justify-content: center;
-      width: 100%; height: 100%; font-size: 20px; font-weight: 300; line-height: 0;
+      width: 100%; height: 100%; font-size: 16px; font-weight: 400; line-height: 0;
       padding: 0; margin: 0;
       transition: opacity 0.2s;
     }
-    .floating-upload-btn .btn-icon-wrap { font-size: 24px; padding-bottom: 2px; }
+    .floating-upload-btn .btn-icon-wrap { font-size: 22px; padding-bottom: 2px; }
 
     .floating-setting-btn:hover .btn-icon-wrap, .floating-upload-btn:hover .btn-icon-wrap { opacity: 0; }
     
     .floating-setting-btn .btn-text-wrap, .floating-upload-btn .btn-text-wrap {
-      opacity: 0; white-space: nowrap; font-size: 13px; font-weight: bold;
+      opacity: 0; white-space: nowrap; font-size: 12px; font-weight: bold;
       transition: opacity 0.2s; transition-delay: 0.05s; pointer-events: none;
     }
     .floating-setting-btn:hover .btn-text-wrap, .floating-upload-btn:hover .btn-text-wrap { opacity: 1; pointer-events: auto; }
@@ -169,9 +169,12 @@
 </head>
 <body>
 
+  <!-- 🔴 [수정됨] 플로팅 버튼 세트 (좌: 설정, 우: 업로드) -->
   <div class="floating-btn-container">
     <button class="floating-setting-btn" onclick="openSettingsModal()" title="환경설정">
-      <div class="btn-icon-wrap">⚙️</div>
+      <div class="btn-icon-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+      </div>
       <div class="btn-text-wrap">환경설정</div>
     </button>
     <button class="floating-upload-btn" onclick="openUploadModal()" title="명단 자동 업로드">
@@ -359,9 +362,9 @@
 
   <script>
     const CAMPUS_URLS = {
-      "yeongtong": "https://script.google.com/macros/s/AKfycbzVdG6stb-OvSnFEzFm34L_4HcMr0C-hsU9xCgzp_1W0AJcsn1ykbrsq7SmWcwwaTDG/exec",
-      "dongtan": "https://script.google.com/macros/s/AKfycbzRcme0LEJ5O3PEqjekUkGSA-zBl_a1Kgb1aLR85A9DBIOA8G-u8uGWAMbx1ThLLw4ITQ/exec",
-      "yeongcheon": "https://script.google.com/macros/s/AKfycbxw9tIiVEb95yEtsCc7Zo1HkoYRAZHCi9KyUdhkXDABU_on2zK659EkjMdrlhIh_ZvC/exec"
+      "yeongtong": "https://script.google.com/macros/s/AKfycbwV5hXkSNGT2_jkCrQakQieov2OswU9x-zCBSkquarMujUqoKXdSZO_ih0OyQxftodu/exec",
+      "dongtan": "https://script.google.com/macros/s/AKfycbwMtIkLaAF85AYQgpWXsVmwftBnPKy0tOV65X8zKajto0srs4MM6pA4oRcczZHDqRcXNg/exec",
+      "yeongcheon": "https://script.google.com/macros/s/AKfycbw6lnnvzOvUykYBM32FvNb66m98e0frXWuQPV0bn-GVAfvVcMNR0ne5g04qu-W763_u/exec"
     };
 
     let globalTermSheets = [];
@@ -378,7 +381,6 @@
             getTeacherMatrixHistory: function(payload) { this._fetch('getTeacherMatrixHistory', payload); },
             uploadNewTerm: function(payload) { this._fetch('uploadNewTerm', payload); }, 
             
-            // 🔴 [추가됨] 관리자 환경설정 및 백업 API 연결
             getSettings: function() { this._fetch('getSettings'); },
             saveSettings: function(payload) { this._fetch('saveSettings', payload); },
             apiIntegratedBackup: function() { this._fetch('apiIntegratedBackup'); },
@@ -977,7 +979,6 @@
         }
     }
 
-    // 🔴 [추가됨] 환경설정 팝업 관련 컨트롤
     function openSettingsModal() {
         if(checkLockdown()) return;
         document.getElementById('settingsModalOverlay').style.display = 'flex';
@@ -1009,7 +1010,6 @@
         }).saveSettings({ pastTermDays: days });
     }
 
-    // 🔴 [추가됨] 1년 전 기준 데이터 통합 백업 및 삭제 로직 (프론트엔드 제어)
     function runIntegratedBackup() {
         showCustomConfirm("오늘 기준 <b>1년 전</b> 과거 데이터를<br>통합 백업하시겠습니까?", function() {
             closeSettingsModal();
@@ -1022,7 +1022,7 @@
                 } else if(res.status === "success") {
                     currentBackupPayload = { targetTermNames: res.targetTermNames, maxEndDate: res.maxEndDate };
                     showCustomConfirm(`✔ <b>데이터 백업 성공!</b> <a href="${res.fileUrl}" target="_blank" style="color:#1366ce; font-weight:bold;">[백업 파일 확인하기]</a><br><br>• 백업된 과거 학기: ${res.termCount}개<br>• 백업된 선생님 기록: ${res.rowCount}행<br><br><span style="color:#dc3545; font-weight:bold;">원본 시트에서 방금 백업한 과거 기록들을<br>완전히 삭제할까요?</span><br><span style="font-size:12px; color:#666; font-weight:normal;">(유지하려면 '아니오'를 누르세요)</span>`, 
-                    function() { // 예 (삭제 진행)
+                    function() { 
                         showLoading(true, "원본에서 과거 데이터를 영구 삭제 중입니다...");
                         google.script.run.withSuccessHandler(function() {
                             showLoading(false);
@@ -1034,7 +1034,7 @@
                             showCustomAlert("· Error: 데이터 삭제 중 오류가 발생했습니다.<br>(" + err.message.replace(/^Error:\s*/, '').trim() + ")");
                         }).apiIntegratedDelete(currentBackupPayload);
                     }, 
-                    function() { // 아니오 (백업만 하고 취소)
+                    function() { 
                         showCustomAlert("백업만 성공적으로 완료되었으며,<br>원본 데이터는 유지합니다.");
                     });
                 }
