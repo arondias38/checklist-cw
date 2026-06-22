@@ -27,7 +27,7 @@
     .prompt-input:focus { border-color: #1366ce; box-shadow: 0 0 0 3px rgba(19,102,206,0.2); }
     
     .modal-buttons { display: flex; justify-content: center; gap: 10px; }
-    .modal-btn { padding: 10px 20px; border: none; border-radius: 50px; font-weight: bold; font-size: 14px; cursor: flex; 1; transition: 0.2s; }
+    .modal-btn { padding: 10px 20px; border: none; border-radius: 50px; font-weight: bold; font-size: 14px; cursor: pointer; transition: 0.2s; }
     .btn-ok { background-color: #1366ce; color: white; } .btn-ok:hover { background-color: #0f52a8; }
     .btn-no { background-color: #f1f3f5; color: #495057; } .btn-no:hover { background-color: #e2e6ea; }
     .btn-yes { background-color: #1366ce; color: white; } .btn-yes:hover { background-color: #0f52a8; }
@@ -67,7 +67,7 @@
     .academy-header-bar { margin-top: 15px; background-color: #495057; color: #ffffff; padding: 10px 25px; font-size: 18px; font-weight: bold; letter-spacing: 0.5px; box-shadow: 0 2px 5px rgba(0,0,0,0.15); display: flex; justify-content: center; align-items: center; position: relative; }
     .academy-header-bar a { position: absolute; right: 25px; }
     
-    /* 🔴 [수정됨] 플로팅 버튼을 좌우로 배치 (좌: 환경설정 / 우: 업로드), 크기/위치 축소 */
+    /* 🔴 [수정됨] 플로팅 버튼 좌우 배치 및 사이즈, 흰색 아이콘 반영 */
     .floating-btn-container { position: fixed; bottom: 25px; left: 25px; z-index: 9999; display: flex; flex-direction: row; gap: 12px; }
 
     .floating-setting-btn, .floating-upload-btn {
@@ -169,11 +169,10 @@
 </head>
 <body>
 
-  <!-- 🔴 [수정됨] 플로팅 버튼 세트 (좌: 설정, 우: 업로드) -->
   <div class="floating-btn-container">
     <button class="floating-setting-btn" onclick="openSettingsModal()" title="환경설정">
       <div class="btn-icon-wrap">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
       </div>
       <div class="btn-text-wrap">환경설정</div>
     </button>
@@ -211,14 +210,14 @@
          </div>
       </div>
 
-      <div style="text-align: left; margin-bottom: 20px;">
-         <div style="font-size:14px; font-weight:bold; color:#333; margin-bottom:10px;">💾 데이터 통합 백업 및 삭제</div>
-         <div style="font-size:12px; color:#666; margin-bottom:10px; line-height:1.4;">오늘 기준 <b>1년 전</b> 과거 데이터를 추출하여 새로운 파일로 백업하고,<br>원본 파일에서는 해당 기록들을 영구 삭제하여 용량을 최적화합니다.</div>
-         <button class="modal-btn" style="background-color:#dc3545; color:white; width:100%; border-radius: 6px; padding: 12px 0;" onclick="runIntegratedBackup()">데이터 통합 백업 및 삭제 실행</button>
+      <div style="text-align: center; margin-bottom: 20px;">
+         <div style="font-size:14px; font-weight:bold; color:#333; margin-bottom:10px; text-align:left;">💾 데이터 통합 백업 및 삭제</div>
+         <div style="font-size:12px; color:#666; margin-bottom:15px; line-height:1.4; text-align:left;">오늘 기준 <b>1년 전</b> 과거 데이터를 추출하여 새로운 파일로 백업하고,<br>원본 파일에서는 해당 기록들을 영구 삭제하여 용량을 최적화합니다.</div>
+         <button class="modal-btn" style="background-color:#dc3545; color:white; border-radius: 50px; padding: 10px 25px; width:auto; display:inline-block; flex:none;" onclick="runIntegratedBackup()">데이터 통합 백업 및 삭제 실행</button>
       </div>
 
       <div class="modal-buttons">
-        <button class="modal-btn btn-no" onclick="closeSettingsModal()">닫기</button>
+        <button class="modal-btn btn-no" style="flex:none; min-width:120px;" onclick="closeSettingsModal()">취소</button>
       </div>
     </div>
   </div>
@@ -266,8 +265,8 @@
          <input type="file" id="fileInput" accept=".xlsx, .xls" style="display:none;">
       </div>
 
-      <div class="modal-buttons" style="margin-bottom: 15px;">
-        <button class="modal-btn btn-no" onclick="closeUploadModal()">취소</button>
+      <div class="modal-buttons" style="margin-bottom: 5px;">
+        <button class="modal-btn btn-no" style="flex:none; min-width:120px;" onclick="closeUploadModal()">취소</button>
       </div>
     </div>
   </div>
@@ -381,6 +380,7 @@
             getTeacherMatrixHistory: function(payload) { this._fetch('getTeacherMatrixHistory', payload); },
             uploadNewTerm: function(payload) { this._fetch('uploadNewTerm', payload); }, 
             
+            // 🔴 백엔드 설정 및 백업 API 맵핑
             getSettings: function() { this._fetch('getSettings'); },
             saveSettings: function(payload) { this._fetch('saveSettings', payload); },
             apiIntegratedBackup: function() { this._fetch('apiIntegratedBackup'); },
@@ -979,6 +979,7 @@
         }
     }
 
+    // 🔴 ⚙️ 환경설정 관련 프론트엔드 로직
     function openSettingsModal() {
         if(checkLockdown()) return;
         document.getElementById('settingsModalOverlay').style.display = 'flex';
