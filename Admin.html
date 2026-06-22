@@ -90,23 +90,6 @@
       transition: opacity 0.2s; transition-delay: 0.05s; pointer-events: none;
     }
     .floating-upload-btn:hover .btn-text-wrap { opacity: 1; pointer-events: auto; }
-
-    /* 🔴 [수정됨] 마우스 오버 시 - 아이콘이 완벽히 사라지고 텍스트만 보이도록 구조 변경 */
-    .btn-term-delete {
-      height: 34px; width: 34px; border-radius: 17px; padding: 0; overflow: hidden; white-space: nowrap; border: none; color: white; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); background-color: #dc3545; position: relative;
-    }
-    .btn-term-delete:hover { width: 145px; background-color: #c82333; border-radius: 17px; }
-    .btn-term-delete .btn-icon-wrap {
-      position: absolute; left: 0; top: 0; display: flex; align-items: center; justify-content: center;
-      width: 100%; height: 100%; font-size: 20px; font-weight: 900; line-height: 0; padding: 0; margin: 0; padding-bottom: 2px;
-      transition: opacity 0.2s;
-    }
-    .btn-term-delete:hover .btn-icon-wrap { opacity: 0; }
-    .btn-term-delete .btn-text-wrap {
-      opacity: 0; white-space: nowrap; font-size: 13px; font-weight: bold;
-      transition: opacity 0.2s; transition-delay: 0.05s; pointer-events: none;
-    }
-    .btn-term-delete:hover .btn-text-wrap { opacity: 1; pointer-events: auto; }
     
     .app-body { padding: 20px; }
     
@@ -242,13 +225,6 @@
       <div class="modal-buttons" style="margin-bottom: 15px;">
         <button class="modal-btn btn-no" onclick="closeUploadModal()">취소</button>
       </div>
-      
-      <div style="border-top: 1px solid #eaeaea; padding-top: 15px; display: flex; justify-content: flex-start;">
-         <button class="btn-term-delete" onclick="checkAndDeletePastTerms()" title="지난 학기 명단 삭제">
-            <span class="btn-icon-wrap">&minus;</span><span class="btn-text-wrap">지난 학기 명단 삭제</span>
-         </button>
-      </div>
-
     </div>
   </div>
 
@@ -359,7 +335,6 @@
             getStudentHistory: function(teacherName, className, studentName, dateStr) { this._fetch('getStudentHistory', {teacherName, className, studentName, dateStr}); },
             getTeacherMatrixHistory: function(payload) { this._fetch('getTeacherMatrixHistory', payload); },
             uploadNewTerm: function(payload) { this._fetch('uploadNewTerm', payload); }, 
-            deletePastTerms: function(payload) { this._fetch('deletePastTerms', payload); }, 
             
             _fetch: async function(action, payload = {}) {
                 const campus = document.getElementById("campusSelect").value;
@@ -1104,53 +1079,6 @@
             }
         };
         reader.readAsArrayBuffer(file);
-    }
-
-    function checkAndDeletePastTerms() {
-        if (!globalTermSheets || globalTermSheets.length === 0) {
-            showCustomAlert("시스템에 등록된 학기 명단 시트가 없습니다.");
-            return;
-        }
-
-        let todayD = new Date();
-        todayD.setHours(0,0,0,0);
-
-        let pastSheets = [];
-        globalTermSheets.forEach(term => {
-            if (term.end) {
-                let parts = term.end.split('-');
-                let ed = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
-                ed.setHours(0,0,0,0);
-                if (ed < todayD) {
-                    pastSheets.push(term.name);
-                }
-            }
-        });
-
-        if (pastSheets.length === 0) {
-            showCustomAlert("삭제할 지난 학기 명단 시트가 없습니다.");
-            return;
-        }
-
-        let sheetListHtml = pastSheets.map(name => `• ${name}`).join('<br>');
-        showCustomConfirm(`지난 학기의 반 명단을 모두 삭제할까요?<br><br><div style="text-align:left; background:#f4f5f7; padding:10px; border-radius:6px; font-size:13px; max-height:100px; overflow-y:auto;"><b>[삭제 대상 시트]</b><br>${sheetListHtml}</div>`, function() {
-            
-            closeUploadModal();
-            showLoading(true, "지난 학기 명단을 삭제 중입니다...");
-            
-            google.script.run
-                .withSuccessHandler(function(count) {
-                    showLoading(false);
-                    showCustomAlert(`✔ <b>삭제 완료!</b><br>총 ${count}개의 지난 학기 명단이 삭제되었습니다.<br>새로고침(F5) 후 사용해 주세요.`, function() {
-                       window.location.reload(); 
-                    });
-                })
-                .withFailureHandler(function(err) {
-                    showLoading(false);
-                    showCustomAlert("· Error: 삭제 중 오류가 발생했습니다.<br>(" + err.message.replace(/^Error:\s*/, '').trim() + ")");
-                })
-                .deletePastTerms({ sheetNames: pastSheets });
-        });
     }
 
     window.addEventListener('keydown', function(e) {
