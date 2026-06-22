@@ -28,7 +28,6 @@
     
     .modal-buttons { display: flex; justify-content: center; gap: 10px; width: 100%; }
     
-    /* 🔴 [수정됨] 찌그러짐 방지를 위해 공통 flex: 1 제거, 대신 하단 id 타겟에만 적용 */
     .modal-btn { padding: 10px 20px; border: none; border-radius: 50px; font-weight: bold; font-size: 14px; cursor: pointer; transition: 0.2s; }
     #modalBtnNo, #modalBtnYes, #modalBtnOk { flex: 1; }
     
@@ -169,7 +168,6 @@
     input[type="checkbox"] { transform: scale(1.3); cursor: pointer; margin: 4px 2px; }
     .master-checkbox { transform: scale(1.3); margin-top: 12px; cursor: pointer; }
 
-    /* 🔴 명단 수정 팝업 내부 전용 CSS (너비 통일, 중앙 정렬 등 적용) */
     .term-row { display: flex; align-items: center; gap: 8px; background: white; padding: 10px; border-radius: 8px; margin-bottom: 8px; border: 1px solid #ced4da; transition: 0.2s; }
     .term-row.deleted { opacity: 0.6; filter: grayscale(50%); border-color: #dc3545; }
     
@@ -177,7 +175,6 @@
     .term-input:disabled { background-color: #e9ecef; color: #6c757d; }
     .term-input:focus { border-color: #1366ce; }
     
-    /* 삭제 버튼 너비 80px 고정, 줄바꿈 방지(nowrap) */
     .term-del-btn { 
       background-color: #dc3545; color: white; border: none; border-radius: 4px; font-size: 13px; cursor: pointer; font-weight: bold; transition: 0.2s; 
       height: 38px; width: 80px; min-width: 80px; flex-shrink: 0; white-space: nowrap; box-sizing: border-box; display: flex; align-items: center; justify-content: center;
@@ -190,7 +187,9 @@
   <div class="floating-btn-container">
     <button class="floating-setting-btn" onclick="openSettingsModal()" title="환경설정">
       <div class="btn-icon-wrap">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="white">
+          <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.56-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.73 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .43-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+        </svg>
       </div>
       <div class="btn-text-wrap">환경설정</div>
     </button>
@@ -265,8 +264,8 @@
       <div style="background-color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ced4da; box-shadow: 0 2px 4px rgba(0,0,0,0.05); z-index: 10;">
         <div style="font-size: 16px; font-weight: 900; color: #1a3978;">📋 특정 학기 명단 수정 및 삭제</div>
         <div style="display: flex; gap: 10px;">
-          <button class="modal-btn btn-no" style="padding: 6px 15px; font-size: 13px;" onclick="closeTermManageModal()">닫기</button>
-          <button class="modal-btn btn-ok" style="padding: 6px 20px; font-size: 14px;" onclick="applyTermChanges()">적용</button>
+          <button class="modal-btn btn-no" style="padding: 6px 15px; font-size: 13px; flex: none;" onclick="closeTermManageModal()">닫기</button>
+          <button class="modal-btn btn-ok" style="padding: 6px 20px; font-size: 14px; flex: none;" onclick="applyTermChanges()">적용</button>
         </div>
       </div>
       
@@ -1118,7 +1117,6 @@
         document.getElementById('termManageModalOverlay').style.display = 'none';
     }
 
-    // 🔴 [수정됨] 1:1:1 비율 통일, 텍스트 겹침 방지 (padding-right: 25px) 적용
     function renderTermManageList() {
         const container = document.getElementById('termManageContent');
         container.innerHTML = "";
