@@ -168,6 +168,7 @@
 </head>
 <body>
 
+  <!-- 플로팅 버튼 세트 (좌: 환경설정 톱니바퀴 / 우: 업로드) -->
   <div class="floating-btn-container">
     <button class="floating-setting-btn" onclick="openSettingsModal()" title="환경설정">
       <div class="btn-icon-wrap">
@@ -195,20 +196,33 @@
     </div>
   </div>
 
+  <!-- 환경설정 모달 (3구역 통합) -->
   <div class="modal-overlay" id="settingsModalOverlay">
     <div class="modal-box" style="width: 480px; padding: 25px;">
       <div style="font-size: 18px; font-weight: 900; background-color: #6c757d; color: white; padding: 14px 0; border-radius: 12px; margin-bottom: 20px;">환경설정</div>
       
+      <!-- 1. 관리자 코드 변경 -->
+      <div style="text-align: left; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #eaeaea;">
+         <div style="font-size:14px; font-weight:bold; color:#333; margin-bottom:10px;">🔑 관리자 코드 설정</div>
+         <div style="font-size:12px; color:#666; margin-bottom:10px;">선생님 앱에서 관리자 모드로 진입할 때 사용하는 암호를 설정합니다.</div>
+         <div style="display: flex; gap: 10px; align-items: center;">
+           <input type="text" id="settingAdminCode" style="width: 150px; padding: 8px; border: 1px solid #ced4da; border-radius: 4px; text-align: center; font-weight:bold;" placeholder="코드 입력">
+           <button class="modal-btn btn-ok" style="margin-left: auto; max-width: 80px; padding: 8px 15px; border-radius: 50px;" onclick="saveAdminCodeSetting()">저장</button>
+         </div>
+      </div>
+
+      <!-- 2. 지난 학기 표시 일정 -->
       <div style="text-align: left; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #eaeaea;">
          <div style="font-size:14px; font-weight:bold; color:#333; margin-bottom:10px;">🕒 선생님 앱의 지난 학기 표시 일정</div>
          <div style="font-size:12px; color:#666; margin-bottom:10px;">현재 진행 중인 학기의 시작일로부터 며칠 동안 노출할지 설정합니다.<br>(지정된 일수가 지나면 선생님 앱 목록에서 자동으로 숨겨집니다.)</div>
          <div style="display: flex; gap: 10px; align-items: center;">
            <input type="number" id="settingPastDays" style="width: 100px; padding: 8px; border: 1px solid #ced4da; border-radius: 4px; text-align: center; font-weight:bold;" min="0">
            <span style="font-size:13px; font-weight:bold; color:#555;">일 동안 노출</span>
-           <button class="modal-btn btn-ok" style="margin-left: auto; max-width: 80px; padding: 8px 15px; border-radius: 50px;" onclick="saveSettings()">저장</button>
+           <button class="modal-btn btn-ok" style="margin-left: auto; max-width: 80px; padding: 8px 15px; border-radius: 50px;" onclick="savePastDaysSetting()">저장</button>
          </div>
       </div>
 
+      <!-- 3. 데이터 통합 백업 및 삭제 -->
       <div style="text-align: center; margin-bottom: 20px;">
          <div style="font-size:14px; font-weight:bold; color:#333; margin-bottom:10px; text-align:left;">💾 데이터 통합 백업 및 삭제</div>
          <div style="font-size:12px; color:#666; margin-bottom:15px; line-height:1.4; text-align:left;">오늘 기준 <b>1년 전</b> 과거 데이터를 추출하여 새로운 파일로 백업하고,<br>원본 파일에서는 해당 기록들을 영구 삭제하여 용량을 최적화합니다.</div>
@@ -221,6 +235,7 @@
     </div>
   </div>
 
+  <!-- 새 학기 명단 업로드 모달 -->
   <div class="modal-overlay" id="uploadModalOverlay">
     <div class="modal-box" style="width: 480px; padding: 25px;">
       <div style="font-size: 18px; font-weight: 900; background-color: #1366ce; color: white; padding: 14px 0; border-radius: 12px; margin-bottom: 15px;">새 학기 명단 업로드</div>
@@ -359,7 +374,6 @@
   </div>
 
   <script>
-    // 🔴 원장님의 지시대로 학원 계정 웹앱 주소로 완벽 고정
     const CAMPUS_URLS = {
       "yeongtong": "https://script.google.com/macros/s/AKfycbzVdG6stb-OvSnFEzFm34L_4HcMr0C-hsU9xCgzp_1W0AJcsn1ykbrsq7SmWcwwaTDG/exec",
       "dongtan": "https://script.google.com/macros/s/AKfycbzRcme0LEJ5O3PEqjekUkGSA-zBl_a1Kgb1aLR85A9DBIOA8G-u8uGWAMbx1ThLLw4ITQ/exec",
@@ -978,13 +992,14 @@
         }
     }
 
-    // 🔴 환경설정 모달 열기 및 설정값 로드
+    // 🔴 ⚙️ 환경설정 관련 3구역 프론트엔드 로직
     function openSettingsModal() {
         if(checkLockdown()) return;
         document.getElementById('settingsModalOverlay').style.display = 'flex';
         showLoading(true, "환경설정을 불러오는 중입니다...");
         google.script.run.withSuccessHandler(function(res) {
             showLoading(false);
+            document.getElementById('settingAdminCode').value = res.adminCode;
             document.getElementById('settingPastDays').value = res.pastTermDays;
         }).withFailureHandler(function(err){
             showLoading(false);
@@ -996,22 +1011,37 @@
         document.getElementById('settingsModalOverlay').style.display = 'none';
     }
 
-    // 🔴 환경설정 저장
-    function saveSettings() {
+    // 🔴 1구역: 관리자 코드 저장 로직
+    function saveAdminCodeSetting() {
+        let code = document.getElementById('settingAdminCode').value.trim();
+        if(code === "") { showCustomAlert("관리자 코드를 입력해 주세요."); return; }
+        
+        showLoading(true, "관리자 코드를 저장 중입니다...");
+        google.script.run.withSuccessHandler(function() {
+            showLoading(false);
+            showCustomAlert("관리자 코드가 안전하게 저장되었습니다.");
+        }).withFailureHandler(function(err){
+            showLoading(false);
+            showCustomAlert("· Error: 저장에 실패했습니다.<br>(" + err.message.replace(/^Error:\s*/, '').trim() + ")");
+        }).saveSettings({ adminCode: code });
+    }
+
+    // 🔴 2구역: 지난 학기 표시 일정 저장 로직
+    function savePastDaysSetting() {
         let days = document.getElementById('settingPastDays').value;
         if(days === "" || days < 0) { showCustomAlert("올바른 일수(숫자)를 입력해 주세요."); return; }
         
-        showLoading(true, "설정을 저장 중입니다...");
+        showLoading(true, "표시 일정을 저장 중입니다...");
         google.script.run.withSuccessHandler(function() {
             showLoading(false);
-            showCustomAlert("환경설정이 안전하게 저장되었습니다.");
+            showCustomAlert("지난 학기 표시 일정이 저장되었습니다.");
         }).withFailureHandler(function(err){
             showLoading(false);
             showCustomAlert("· Error: 저장에 실패했습니다.<br>(" + err.message.replace(/^Error:\s*/, '').trim() + ")");
         }).saveSettings({ pastTermDays: days });
     }
 
-    // 🔴 1년 전 과거 데이터 통합 백업 및 삭제 로직
+    // 🔴 3구역: 1년 전 과거 데이터 통합 백업 및 삭제 로직
     function runIntegratedBackup() {
         showCustomConfirm("오늘 기준 <b>1년 전</b> 과거 데이터를<br>통합 백업하시겠습니까?", function() {
             closeSettingsModal();
