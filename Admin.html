@@ -67,29 +67,38 @@
     .academy-header-bar { margin-top: 15px; background-color: #495057; color: #ffffff; padding: 10px 25px; font-size: 18px; font-weight: bold; letter-spacing: 0.5px; box-shadow: 0 2px 5px rgba(0,0,0,0.15); display: flex; justify-content: center; align-items: center; position: relative; }
     .academy-header-bar a { position: absolute; right: 25px; }
     
-    .floating-upload-btn {
-      position: fixed; bottom: 35px; left: 35px; z-index: 9999;
+    /* 🔴 [추가/수정됨] 플로팅 버튼을 상하로 배치 (위: 환경설정 / 아래: 업로드) */
+    .floating-btn-container { position: fixed; bottom: 35px; left: 35px; z-index: 9999; display: flex; flex-direction: column; gap: 15px; }
+
+    .floating-setting-btn, .floating-upload-btn {
       height: 40px; width: 40px; border-radius: 20px;
-      background-color: #28a745; color: white; border: none;
+      color: white; border: none;
       box-shadow: 0 4px 10px rgba(0,0,0,0.25); cursor: pointer;
       display: flex; align-items: center; justify-content: center;
       overflow: hidden; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
     }
-    .floating-upload-btn:hover {
-      width: 155px; background-color: #218838; border-radius: 20px;
-    }
-    .floating-upload-btn .btn-icon-wrap {
+    .floating-setting-btn { background-color: #6c757d; }
+    .floating-upload-btn { background-color: #28a745; }
+
+    .floating-setting-btn:hover { width: 110px; background-color: #5a6268; border-radius: 20px; }
+    .floating-upload-btn:hover { width: 155px; background-color: #218838; border-radius: 20px; }
+
+    .floating-setting-btn .btn-icon-wrap, .floating-upload-btn .btn-icon-wrap {
       position: absolute; left: 0; top: 0; display: flex; align-items: center; justify-content: center;
-      width: 100%; height: 100%; font-size: 24px; font-weight: 300; line-height: 0;
+      width: 100%; height: 100%; font-size: 20px; font-weight: 300; line-height: 0;
       padding: 0; margin: 0;
       transition: opacity 0.2s;
     }
-    .floating-upload-btn:hover .btn-icon-wrap { opacity: 0; }
-    .floating-upload-btn .btn-text-wrap {
+    .floating-upload-btn .btn-icon-wrap { font-size: 24px; padding-bottom: 2px; }
+
+    .floating-setting-btn:hover .btn-icon-wrap, .floating-upload-btn:hover .btn-icon-wrap { opacity: 0; }
+    
+    .floating-setting-btn .btn-text-wrap, .floating-upload-btn .btn-text-wrap {
       opacity: 0; white-space: nowrap; font-size: 13px; font-weight: bold;
       transition: opacity 0.2s; transition-delay: 0.05s; pointer-events: none;
     }
-    .floating-upload-btn:hover .btn-text-wrap { opacity: 1; pointer-events: auto; }
+    .floating-setting-btn:hover .btn-text-wrap, .floating-upload-btn:hover .btn-text-wrap { opacity: 1; pointer-events: auto; }
     
     .app-body { padding: 20px; }
     
@@ -160,10 +169,16 @@
 </head>
 <body>
 
-  <button class="floating-upload-btn" onclick="openUploadModal()" title="명단 자동 업로드">
-    <div class="btn-icon-wrap">+</div>
-    <div class="btn-text-wrap">새 학기 명단 업로드</div>
-  </button>
+  <div class="floating-btn-container">
+    <button class="floating-setting-btn" onclick="openSettingsModal()" title="환경설정">
+      <div class="btn-icon-wrap">⚙️</div>
+      <div class="btn-text-wrap">환경설정</div>
+    </button>
+    <button class="floating-upload-btn" onclick="openUploadModal()" title="명단 자동 업로드">
+      <div class="btn-icon-wrap">+</div>
+      <div class="btn-text-wrap">새 학기 명단 업로드</div>
+    </button>
+  </div>
 
   <div class="spinner-overlay" id="globalSpinner"><div class="spinner"></div><div class="spinner-text" id="spinnerText">체크리스트 데이터를 불러오는 중입니다.</div></div>
   
@@ -175,6 +190,32 @@
         <button id="modalBtnNo" class="modal-btn btn-no" style="display:none;">아니오</button>
         <button id="modalBtnYes" class="modal-btn btn-yes" style="display:none;">예</button>
         <button id="modalBtnOk" class="modal-btn btn-ok" style="display:inline-block;">확인</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="settingsModalOverlay">
+    <div class="modal-box" style="width: 480px; padding: 25px;">
+      <div style="font-size: 18px; font-weight: 900; background-color: #6c757d; color: white; padding: 14px 0; border-radius: 12px; margin-bottom: 20px;">환경설정</div>
+      
+      <div style="text-align: left; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #eaeaea;">
+         <div style="font-size:14px; font-weight:bold; color:#333; margin-bottom:10px;">🕒 선생님 앱의 지난 학기 표시 일정</div>
+         <div style="font-size:12px; color:#666; margin-bottom:10px;">현재 진행 중인 학기의 시작일로부터 며칠 동안 노출할지 설정합니다.<br>(지정된 일수가 지나면 선생님 앱 목록에서 자동으로 숨겨집니다.)</div>
+         <div style="display: flex; gap: 10px; align-items: center;">
+           <input type="number" id="settingPastDays" style="width: 100px; padding: 8px; border: 1px solid #ced4da; border-radius: 4px; text-align: center; font-weight:bold;" min="0">
+           <span style="font-size:13px; font-weight:bold; color:#555;">일 동안 노출</span>
+           <button class="modal-btn btn-ok" style="margin-left: auto; max-width: 80px; padding: 8px 15px;" onclick="saveSettings()">저장</button>
+         </div>
+      </div>
+
+      <div style="text-align: left; margin-bottom: 20px;">
+         <div style="font-size:14px; font-weight:bold; color:#333; margin-bottom:10px;">💾 데이터 통합 백업 및 삭제</div>
+         <div style="font-size:12px; color:#666; margin-bottom:10px; line-height:1.4;">오늘 기준 <b>1년 전</b> 과거 데이터를 추출하여 새로운 파일로 백업하고,<br>원본 파일에서는 해당 기록들을 영구 삭제하여 용량을 최적화합니다.</div>
+         <button class="modal-btn" style="background-color:#dc3545; color:white; width:100%; border-radius: 6px; padding: 12px 0;" onclick="runIntegratedBackup()">데이터 통합 백업 및 삭제 실행</button>
+      </div>
+
+      <div class="modal-buttons">
+        <button class="modal-btn btn-no" onclick="closeSettingsModal()">닫기</button>
       </div>
     </div>
   </div>
@@ -324,6 +365,7 @@
     };
 
     let globalTermSheets = [];
+    let currentBackupPayload = null;
 
     function createGoogleScriptMock() {
         return {
@@ -335,6 +377,12 @@
             getStudentHistory: function(teacherName, className, studentName, dateStr) { this._fetch('getStudentHistory', {teacherName, className, studentName, dateStr}); },
             getTeacherMatrixHistory: function(payload) { this._fetch('getTeacherMatrixHistory', payload); },
             uploadNewTerm: function(payload) { this._fetch('uploadNewTerm', payload); }, 
+            
+            // 🔴 [추가됨] 관리자 환경설정 및 백업 API 연결
+            getSettings: function() { this._fetch('getSettings'); },
+            saveSettings: function(payload) { this._fetch('saveSettings', payload); },
+            apiIntegratedBackup: function() { this._fetch('apiIntegratedBackup'); },
+            apiIntegratedDelete: function(payload) { this._fetch('apiIntegratedDelete', payload); },
             
             _fetch: async function(action, payload = {}) {
                 const campus = document.getElementById("campusSelect").value;
@@ -929,6 +977,74 @@
         }
     }
 
+    // 🔴 [추가됨] 환경설정 팝업 관련 컨트롤
+    function openSettingsModal() {
+        if(checkLockdown()) return;
+        document.getElementById('settingsModalOverlay').style.display = 'flex';
+        showLoading(true, "환경설정을 불러오는 중입니다...");
+        google.script.run.withSuccessHandler(function(res) {
+            showLoading(false);
+            document.getElementById('settingPastDays').value = res.pastTermDays;
+        }).withFailureHandler(function(err){
+            showLoading(false);
+            showCustomAlert("· Error: 설정을 불러오지 못했습니다.<br>(" + err.message.replace(/^Error:\s*/, '').trim() + ")");
+        }).getSettings();
+    }
+    
+    function closeSettingsModal() {
+        document.getElementById('settingsModalOverlay').style.display = 'none';
+    }
+
+    function saveSettings() {
+        let days = document.getElementById('settingPastDays').value;
+        if(days === "" || days < 0) { showCustomAlert("올바른 일수(숫자)를 입력해 주세요."); return; }
+        
+        showLoading(true, "설정을 저장 중입니다...");
+        google.script.run.withSuccessHandler(function() {
+            showLoading(false);
+            showCustomAlert("환경설정이 안전하게 저장되었습니다.");
+        }).withFailureHandler(function(err){
+            showLoading(false);
+            showCustomAlert("· Error: 저장에 실패했습니다.<br>(" + err.message.replace(/^Error:\s*/, '').trim() + ")");
+        }).saveSettings({ pastTermDays: days });
+    }
+
+    // 🔴 [추가됨] 1년 전 기준 데이터 통합 백업 및 삭제 로직 (프론트엔드 제어)
+    function runIntegratedBackup() {
+        showCustomConfirm("오늘 기준 <b>1년 전</b> 과거 데이터를<br>통합 백업하시겠습니까?", function() {
+            closeSettingsModal();
+            showLoading(true, "과거 데이터를 수집하여<br>백업 파일을 생성 중입니다...<br>(시간이 다소 소요될 수 있습니다.)");
+            
+            google.script.run.withSuccessHandler(function(res) {
+                showLoading(false);
+                if(res.status === "none") {
+                    showCustomAlert("백업할 1년 전 과거 데이터가 없습니다.");
+                } else if(res.status === "success") {
+                    currentBackupPayload = { targetTermNames: res.targetTermNames, maxEndDate: res.maxEndDate };
+                    showCustomConfirm(`✔ <b>데이터 백업 성공!</b> <a href="${res.fileUrl}" target="_blank" style="color:#1366ce; font-weight:bold;">[백업 파일 확인하기]</a><br><br>• 백업된 과거 학기: ${res.termCount}개<br>• 백업된 선생님 기록: ${res.rowCount}행<br><br><span style="color:#dc3545; font-weight:bold;">원본 시트에서 방금 백업한 과거 기록들을<br>완전히 삭제할까요?</span><br><span style="font-size:12px; color:#666; font-weight:normal;">(유지하려면 '아니오'를 누르세요)</span>`, 
+                    function() { // 예 (삭제 진행)
+                        showLoading(true, "원본에서 과거 데이터를 영구 삭제 중입니다...");
+                        google.script.run.withSuccessHandler(function() {
+                            showLoading(false);
+                            showCustomAlert("✔ <b>삭제 완료!</b><br>과거 데이터가 원본 시트에서<br>안전하게 삭제되었습니다.", function() {
+                                window.location.reload();
+                            });
+                        }).withFailureHandler(function(err) {
+                            showLoading(false);
+                            showCustomAlert("· Error: 데이터 삭제 중 오류가 발생했습니다.<br>(" + err.message.replace(/^Error:\s*/, '').trim() + ")");
+                        }).apiIntegratedDelete(currentBackupPayload);
+                    }, 
+                    function() { // 아니오 (백업만 하고 취소)
+                        showCustomAlert("백업만 성공적으로 완료되었으며,<br>원본 데이터는 유지합니다.");
+                    });
+                }
+            }).withFailureHandler(function(err) {
+                showLoading(false);
+                showCustomAlert("· Error: 데이터 백업 중 오류가 발생했습니다.<br>(" + err.message.replace(/^Error:\s*/, '').trim() + ")");
+            }).apiIntegratedBackup();
+        });
+    }
+
     function openUploadModal() {
         if(checkLockdown()) return;
         document.getElementById('latestTermInfo').innerText = "📌 최근 등록된 학기 종료일: " + globalLatestEndDate;
@@ -1083,6 +1199,7 @@
 
     window.addEventListener('keydown', function(e) {
       const modal = document.getElementById('customModalOverlay');
+      const settingModal = document.getElementById('settingsModalOverlay');
       
       if (e.key === 'Escape') {
           const matrixOverlay = document.getElementById('matrixOverlay');
@@ -1096,6 +1213,9 @@
           const uploadOverlay = document.getElementById('uploadModalOverlay');
           if (uploadOverlay && uploadOverlay.style.display === 'flex') {
               closeUploadModal(); return;
+          }
+          if (settingModal && settingModal.style.display === 'flex') {
+              closeSettingsModal(); return;
           }
       }
 
