@@ -12,7 +12,8 @@
 
   <style>
     @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
-    body { font-family: 'Pretendard', 'Malgun Gothic', sans-serif; margin: 0; padding: 0; background-color: #f4f6f9; color: #333; }
+    /* 🔴 [수정됨] 모바일에서 특정 글자만 커지는 현상 방어 (-webkit-text-size-adjust) */
+    body { font-family: 'Pretendard', 'Malgun Gothic', sans-serif; margin: 0; padding: 0; background-color: #f4f6f9; color: #333; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
     
     .spinner-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.7); z-index: 10005; justify-content: center; align-items: center; flex-direction: column; }
     .spinner { width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #1366ce; border-radius: 50%; animation: spin 1s linear infinite; }
@@ -184,7 +185,6 @@
 </head>
 <body>
 
-  <!-- 플로팅 버튼 세트 (🔴 두께가 얇고 세련된 형태의 윤곽선(Outline) 면(Fill) SVG로 교체) -->
   <div class="floating-btn-container">
     <button class="floating-setting-btn" onclick="openSettingsModal()" title="환경설정">
       <div class="btn-icon-wrap">
@@ -214,7 +214,6 @@
     </div>
   </div>
 
-  <!-- 환경설정 모달 -->
   <div class="modal-overlay" id="settingsModalOverlay">
     <div class="modal-box" style="width: 480px; padding: 25px;">
       <div style="font-size: 18px; font-weight: 900; background-color: #6c757d; color: white; padding: 14px 0; border-radius: 12px; margin-bottom: 20px;">환경설정</div>
@@ -266,8 +265,8 @@
       <div style="background-color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ced4da; box-shadow: 0 2px 4px rgba(0,0,0,0.05); z-index: 10;">
         <div style="font-size: 16px; font-weight: 900; color: #1a3978;">📋 특정 학기 명단 수정 및 삭제</div>
         <div style="display: flex; gap: 10px;">
-          <button class="modal-btn btn-no" style="padding: 6px 15px; font-size: 13px; flex: none;" onclick="closeTermManageModal()">닫기</button>
-          <button class="modal-btn btn-ok" style="padding: 6px 20px; font-size: 14px; flex: none;" onclick="applyTermChanges()">적용</button>
+          <button class="modal-btn btn-no" style="padding: 6px 20px; font-size: 14px; min-width: 75px; flex: none;" onclick="closeTermManageModal()">닫기</button>
+          <button class="modal-btn btn-ok" style="padding: 6px 20px; font-size: 14px; min-width: 75px; flex: none;" onclick="applyTermChanges()">적용</button>
         </div>
       </div>
       
@@ -280,13 +279,11 @@
       </div>
 
       <div id="termManageContent" style="flex: 1; overflow-y: auto; padding: 8px 20px 15px 20px;">
-        <!-- Javascript renders items here -->
-      </div>
+        </div>
       
     </div>
   </div>
 
-  <!-- 새 학기 명단 업로드 모달 -->
   <div class="modal-overlay" id="uploadModalOverlay">
     <div class="modal-box" style="width: 480px; padding: 25px;">
       <div style="font-size: 18px; font-weight: 900; background-color: #1366ce; color: white; padding: 14px 0; border-radius: 12px; margin-bottom: 15px;">새 학기 명단 업로드</div>
@@ -1350,6 +1347,7 @@
         if (e.target.files.length) processExcel(e.target.files[0]);
     });
 
+    // 🔴 [수정됨] 엑셀 업로드 시 추출 정보 팝업 UI 변경
     function processExcel(file) {
         let sDate = document.getElementById('upStartDate').value;
         let eDate = document.getElementById('upEndDate').value;
@@ -1432,7 +1430,17 @@
 
                 showLoading(false);
 
-                showCustomConfirm(`성공적으로 ${parsedStudents.length}명의 데이터를 추출했습니다.<br>명단을 적용할까요?`, function() {
+                // 🔴 날짜 형식을 2026.03.01 스타일로 변경하여 팝업 내용 작성
+                let formattedStart = sDate.replace(/-/g, '.');
+                let formattedEnd = eDate.replace(/-/g, '.');
+                let confirmMsg = `성공적으로 ${parsedStudents.length}명의 데이터를 추출했습니다.<br><br>` +
+                                 `<div style="text-align: left; display: inline-block; font-size: 14px; line-height: 1.6; color: #333;">` +
+                                 `· 학기명단이름: ${tName}<br>` +
+                                 `· 학기시작날짜: ${formattedStart}<br>` +
+                                 `· 학기종료날짜: ${formattedEnd}` +
+                                 `</div><br><br>명단을 작성할까요?`;
+
+                showCustomConfirm(confirmMsg, function() {
                     
                     showLoading(true, "명단을 생성중입니다...<br>화면을 닫지 마세요.");
                     
