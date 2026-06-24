@@ -489,7 +489,17 @@
                         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                         body: JSON.stringify({ action: action, ...payload })
                     });
-                    const result = await response.json();
+                    
+                    if (!response.ok) throw new Error(`서버 상태 이상 (${response.status})`);
+                    
+                    let text = await response.text();
+                    let result;
+                    try {
+                        result = JSON.parse(text);
+                    } catch (e) {
+                        throw new Error("JSON_PARSE_ERROR");
+                    }
+
                     if (result.success) {
                         if (this.successCb) this.successCb(result.data);
                     } else {
@@ -497,8 +507,18 @@
                         else showCustomAlert("· Error: 서버 오류가 발생했습니다.<br>(" + result.error.replace(/^Error:\s*/, '').trim() + ")");
                     }
                 } catch (e) {
-                    if (this.failureCb) this.failureCb(e);
-                    else showCustomAlert("· Error: 통신 오류가 발생했습니다.<br>(" + e.message.replace(/^Error:\s*/, '').trim() + ")");
+                    let errorMsg = "";
+                    let rawError = e.message || String(e);
+                    if (rawError.includes("JSON_PARSE_ERROR") || rawError.includes("Unexpected token") || rawError.includes("SyntaxError")) {
+                        errorMsg = "서버 통신이 지연되었거나 보안 세션이 만료되었습니다.<br>키보드의 <b>[새로고침(F5)]</b>을 눌러 다시 시도해 주세요.";
+                    } else if (rawError.includes("Failed to fetch") || rawError.includes("NetworkError")) {
+                        errorMsg = "인터넷 연결이 원활하지 않습니다.<br>Wi-Fi 등 <b>네트워크 상태를 확인</b>한 후 다시 시도해 주세요.";
+                    } else {
+                        errorMsg = `일시적인 통신 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.<br><span style="font-size:11px; color:#888;">(${rawError})</span>`;
+                    }
+                    
+                    if (this.failureCb) this.failureCb(new Error(errorMsg));
+                    else showCustomAlert(errorMsg);
                 }
             }
         };
@@ -590,7 +610,15 @@
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify({ action: 'getInitialData' })
         })
-        .then(res => res.json())
+        .then(async res => {
+            if (!res.ok) throw new Error(`서버 상태 이상 (${res.status})`);
+            let text = await res.text();
+            try {
+                return JSON.parse(text);
+            } catch (e) {
+                throw new Error("JSON_PARSE_ERROR");
+            }
+        })
         .then(result => {
             showLoading(false);
             if (result.success) {
@@ -631,7 +659,16 @@
         })
         .catch(e => {
             showLoading(false);
-            showCustomAlert("· Error: 통신 오류가 발생했습니다.<br>(" + e.message.replace(/^Error:\s*/, '').trim() + ")");
+            let errorMsg = "";
+            let rawError = e.message || String(e);
+            if (rawError.includes("JSON_PARSE_ERROR") || rawError.includes("Unexpected token") || rawError.includes("SyntaxError")) {
+                errorMsg = "서버 통신이 지연되었거나 보안 세션이 만료되었습니다.<br>키보드의 <b>[새로고침(F5)]</b>을 눌러 다시 시도해 주세요.";
+            } else if (rawError.includes("Failed to fetch") || rawError.includes("NetworkError")) {
+                errorMsg = "인터넷 연결이 원활하지 않습니다.<br>Wi-Fi 등 <b>네트워크 상태를 확인</b>한 후 다시 시도해 주세요.";
+            } else {
+                errorMsg = `일시적인 통신 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.<br><span style="font-size:11px; color:#888;">(${rawError})</span>`;
+            }
+            showCustomAlert(errorMsg);
             if(!isFirstLoad) campusEl.value = prevCampus;
         });
     }
