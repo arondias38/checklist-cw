@@ -162,12 +162,11 @@
     .egg-bubble::after { content: ''; position: absolute; bottom: -8px; left: 15px; border-width: 8px 8px 0; border-style: solid; border-color: #1a3978 transparent transparent transparent; }
     .egg-bubble.show { opacity: 1; transform: translateY(0); } 
 
-    /* 🔴 [수정] 이스터에그 흩날리는 잎을 파스텔 초록색으로 변경 */
     .cherry-petal {
       position: fixed; top: -10%; z-index: 10001; 
-      background: linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%); 
+      background: linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%); /* 파스텔 초록 그라데이션 */
       border-radius: 15px 0 15px 0; 
-      box-shadow: 0 0 4px rgba(165, 214, 167, 0.6); 
+      box-shadow: 0 0 4px rgba(165, 214, 167, 0.6); /* 초록빛 그림자 */
       pointer-events: none; 
       animation-name: fall, sway;
       animation-timing-function: linear, ease-in-out;
@@ -182,17 +181,6 @@
     @keyframes sway {
       0% { margin-left: -100px; }
       100% { margin-left: 100px; } 
-    }
-
-    /* 🔴 [NEW] 투명 배경의 달리는 픽셀 강아지(GIF) 애니메이션 CSS */
-    .running-dog-gif {
-      position: fixed; bottom: 15px; right: -150px; 
-      height: 65px; z-index: 10002; pointer-events: none;
-      animation: runAcross 4.5s linear forwards;
-    }
-    @keyframes runAcross {
-      0% { right: -150px; }
-      100% { right: 110vw; }
     }
 
     @media screen and (max-width: 1024px) {
@@ -377,6 +365,7 @@
             commitAttendanceToDatabase: function(payload) { this._fetch('commitAttendanceToDatabase', {payload}); },
             getStudentHistory: function(teacherName, className, studentName, dateStr) { this._fetch('getStudentHistory', {teacherName, className, studentName, dateStr}); },
             
+            // 🔴 [수정됨] JSON 파싱 및 네트워트 에러 시 친절한 한국어 팝업으로 변환하는 로직 적용
             _fetch: async function(action, payload = {}) {
                 const campus = document.getElementById("campusSelect").value;
                 if (!campus) {
@@ -1263,16 +1252,6 @@
         const bubble = document.getElementById("eggBubble");
         bubble.classList.add("show");
         createCherryBlossoms();
-
-        // 🔴 [NEW] 강아지 GIF 애니메이션 추가
-        const dogImg = document.createElement("img");
-        // 투명 배경의 달리는 픽셀 강아지(웰시코기) GIF (이미지 호스팅 링크)
-        dogImg.src = "https://i.imgur.com/PZlh0.gif"; 
-        dogImg.classList.add("running-dog-gif");
-        document.body.appendChild(dogImg);
-        // 화면을 완전히 지나간 후 삭제 (4.5초)
-        setTimeout(() => { dogImg.remove(); }, 4500);
-
         setTimeout(() => { bubble.classList.remove("show"); }, 3000); 
       }
     } 
