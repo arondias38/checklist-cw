@@ -184,16 +184,25 @@
       100% { margin-left: 100px; } 
     }
 
-    /* 🔴 [NEW] 깨지지 않는 진짜 강아지 GIF 애니메이션 CSS */
-    .running-dog-gif {
-      position: fixed; bottom: 15px; right: -150px; 
-      height: 80px; z-index: 10002; pointer-events: none;
-      image-rendering: pixelated; /* 픽셀 깨짐 방지 */
-      animation: runAcross 4s linear forwards;
+    /* 🔴 [수정] 중앙에서 튀어나와 점프하고 사라지는 강아지 애니메이션 CSS */
+    .popup-dog-gif {
+      position: fixed; 
+      left: 50%; 
+      transform: translateX(-50%); /* 정확히 화면 중앙 정렬 */
+      bottom: -100px; /* 처음엔 화면 아래에 숨김 */
+      height: 80px; 
+      z-index: 10002; 
+      pointer-events: none;
+      image-rendering: pixelated; 
+      animation: dogPopAndJump 4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
     }
-    @keyframes runAcross {
-      0% { right: -150px; }
-      100% { right: 110vw; }
+
+    @keyframes dogPopAndJump {
+      0%   { bottom: -100px; }            /* 시작: 밑에서 대기 */
+      10%  { bottom: 15px; }              /* 0.4초: 쏙! 하고 튀어나옴 */
+      80%  { bottom: 15px; }              /* 2.8초 동안: 얌전히 머무름 */
+      88%  { bottom: 80px; }              /* 사라지기 직전: 위로 살짝 폴짝! 점프 */
+      100% { bottom: -100px; }            /* 끝: 밑으로 떨어지며 퇴장 */
     }
 
     @media screen and (max-width: 1024px) {
@@ -1269,7 +1278,7 @@
         const dogImg = document.createElement("img");
         // 투명 배경의 달리는 픽셀 강아지(요크셔테리어 픽셀아트) GIF (GitHub 오픈소스 100% 무중단 링크)
         dogImg.src = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/506.gif"; 
-        dogImg.classList.add("running-dog-gif");
+        dogImg.classList.add("popup-dog-gif");
         document.body.appendChild(dogImg);
         
         // 화면을 완전히 지나간 후 삭제 (4초)
