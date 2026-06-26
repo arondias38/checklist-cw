@@ -194,15 +194,15 @@
       z-index: 10002; 
       pointer-events: none;
       image-rendering: pixelated; 
-      animation: dogPopAndJump 4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+      animation: dogPopAndJump 6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
     }
 
     @keyframes dogPopAndJump {
-      0%   { bottom: -100px; }            /* 시작: 밑에서 대기 */
-      10%  { bottom: 15px; }              /* 0.4초: 쏙! 하고 튀어나옴 */
-      80%  { bottom: 15px; }              /* 2.8초 동안: 얌전히 머무름 */
-      88%  { bottom: 80px; }              /* 사라지기 직전: 위로 살짝 폴짝! 점프 */
-      100% { bottom: -100px; }            /* 끝: 밑으로 떨어지며 퇴장 */
+      0%   { bottom: -100px; }            /* 시작 */
+      6%   { bottom: 15px; }              /* 0.36초만에 쏙! (기존 10% -> 6%) */
+      88%  { bottom: 15px; }              /* 약 5초 동안 얌전히 머무름! (기존 80% -> 88%) */
+      93%  { bottom: 80px; }              /* 위로 살짝 폴짝! (기존 88% -> 93%) */
+      100% { bottom: -100px; }            /* 끝 */
     }
 
     @media screen and (max-width: 1024px) {
@@ -1281,8 +1281,8 @@
         dogImg.classList.add("popup-dog-gif");
         document.body.appendChild(dogImg);
         
-        // 화면을 완전히 지나간 후 삭제 (4초)
-        setTimeout(() => { dogImg.remove(); }, 4000);
+        // 화면을 완전히 지나간 후 삭제 (6초)
+        setTimeout(() => { dogImg.remove(); }, 6000);
 
         setTimeout(() => { bubble.classList.remove("show"); }, 3000); 
       }
