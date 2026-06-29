@@ -1078,14 +1078,14 @@
         const cleanName = st.name.replace(/\s*\(.*?\)\s*/g, "").trim(); const evalScore = String(st.evalScore).trim() || "없음"; const wrongScore = String(st.wrongScore).trim() || "없음";
         const dailyVal = String(st.dailyTest).trim(); const weeklyVal = String(st.weeklyTest).trim(); const note = String(st.note).trim() || "없음";
         
-        let content = `${formattedDateStr}\n\n✔ ${cleanName} 학생 체크리스트\n\n● 반명: ${className}\n- 수업개요: ${currentSubject}`;
+        let content = `${formattedDateStr}\n\n✔ ${cleanName} 학생 체크리스트\n\n● 반명: ${className}\n\n● 수업개요: ${currentSubject}`;
         let details = [];
-        if (evalScore !== "" && evalScore !== "없음") details.push(`• 과제평가: ${evalScore}`); 
-        if (wrongScore !== "" && wrongScore !== "없음") details.push(`• 오답노트: ${wrongScore}`);
-        if (dailyVal !== "" && dailyVal !== "없음") details.push(`• 일일테스트: ${dailyVal}`);
-        if (weeklyVal !== "" && weeklyVal !== "없음") details.push(`• 주간테스트: ${weeklyVal}`);
-        if (note !== "" && note !== "없음") details.push(`• 특이사항: ${note}`);
-        if (details.length > 0) content += `\n\n${details.join('\n')}`;
+        if (evalScore !== "" && evalScore !== "없음") details.push(`● 과제평가: ${evalScore}`); 
+        if (wrongScore !== "" && wrongScore !== "없음") details.push(`● 오답노트: ${wrongScore}`);
+        if (dailyVal !== "" && dailyVal !== "없음") details.push(`● 일일테스트: ${dailyVal}`);
+        if (weeklyVal !== "" && weeklyVal !== "없음") details.push(`● 주간테스트: ${weeklyVal}`);
+        if (note !== "" && note !== "없음") details.push(`● 특이사항: ${note}`);
+        if (details.length > 0) content += `\n\n${details.join('\n\n')}`;
         html += `<div class="card" id="card${idx}"><div class="card-header-container"><div class="card-header">${cleanName}</div><button class="copy-btn" onclick="copySingleText(${idx}, this)">복사</button></div><div id="cardContent${idx}" class="card-content">${content}</div></div>`;
       });
       area.innerHTML = html;
