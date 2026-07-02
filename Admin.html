@@ -399,7 +399,7 @@
   </div>
 
   <!-- 🟢 버전 표시 영역 -->
-  <div style="position: absolute; right: 25px; margin-top: 6px; font-size: 11px; color: #adb5bd; font-family: 'Pretendard', sans-serif; letter-spacing: 0.5px; z-index: 10;">v.26.07.02-02</div>
+  <div style="position: absolute; right: 25px; margin-top: 6px; font-size: 11px; color: #adb5bd; font-family: 'Pretendard', sans-serif; letter-spacing: 0.5px; z-index: 10;">v.26.07.02-03</div>
 
   <div class="app-body">
     <div class="header-bar">
@@ -553,7 +553,6 @@
       document.getElementById('modalBtnNo').innerText = '아니오'; document.getElementById('modalBtnYes').innerText = '예';
     }
 
-    // 🟢 팝업 너비를 동적으로 조절할 수 있도록 파라미터(customWidth) 추가
     function showCustomConfirm(msg, onYes, onCancel, customWidth) {
       resetModalStates(); 
       document.getElementById('modalMessage').innerHTML = msg; 
@@ -998,7 +997,18 @@
     function renderMatrixPopup(data) {
         if (data.error) { showCustomAlert("· Error: " + data.error.replace(/^Error:\s*/, '').trim()); return; }
         
-        document.getElementById("matrixTitle").innerHTML = `<b>${data.teacherName}</b> 선생님 학기 요약`;
+        let sumHtml = "";
+        if (data.summary) {
+            let subjPct = data.summary.subjExpected > 0 ? Math.min(100, Math.round((data.summary.subjDone / data.summary.subjExpected) * 100)) : 0;
+            let sentPct = data.summary.sentExpected > 0 ? Math.min(100, Math.round((data.summary.sentDone / data.summary.sentExpected) * 100)) : 100;
+            
+            let subjStyle = subjPct < 100 ? "color:#dc3545; font-weight:bold;" : "color:inherit;";
+            let sentStyle = sentPct < 100 ? "color:#dc3545; font-weight:bold;" : "color:inherit;";
+            
+            sumHtml = ` <span style="font-size:14px; font-weight:normal;">( 이번 학기 수업개요입력 <span style="${subjStyle}">${subjPct}%</span> &nbsp;|&nbsp; 발송완료체크 <span style="${sentStyle}">${sentPct}%</span> )</span>`;
+        }
+        document.getElementById("matrixTitle").innerHTML = `<b>${data.teacherName}</b> 선생님 학기 요약${sumHtml}`;
+        
         const contentArea = document.getElementById("matrixContentArea");
         contentArea.innerHTML = "";
         
@@ -1351,7 +1361,7 @@
             let eD = mod.newEnd || termManageData.find(t=>t.name === mod.originalName).end;
             if(sD > eD) {
                 let n = mod.newName || mod.originalName;
-                showCustomAlert(`[${n}]의 종료 날짜가 시작 날짜보다 빠를 수 없습니다.`);
+                showCustomAlert(`[${n}]의 종료 날짜가 시작 날짜보다 빠를 수문을 수 없습니다.`);
                 return;
             }
         }
@@ -1374,7 +1384,6 @@
         }).applyTermModifications(mods);
     }
 
-    // 🟢 [수정됨] 동적 너비를 적용하여 텍스트 줄바꿈 방지
     function viewBackupLogs() {
         showLoading(true, "백업/삭제 실행 로그를 불러오는 중입니다...");
         google.script.run.withSuccessHandler(function(logs) {
@@ -1396,7 +1405,6 @@
                 msg += "</table>";
             }
             msg += "</div>";
-            // 650px 너비로 팝업 호출
             showCustomAlert("<div style='font-size:16px; font-weight:900; color:#1a3978; margin-bottom:15px;'>💾 백업/삭제 실행 로그</div>" + msg, null, '650px');
         }).withFailureHandler(function(err){
             showLoading(false);
@@ -1404,7 +1412,6 @@
         }).getBackupLogs();
     }
 
-    // 🟢 [수정됨] 엑셀 다운로드 버튼 위치 변경, 흰색 디스크 아이콘 삽입, 구분선 추가
     function runIntegratedBackup() {
         showCustomConfirm("오늘 기준 <b>1년 전</b> 과거 데이터를<br>통합 백업하시겠습니까?", function() {
             closeSettingsModal();
