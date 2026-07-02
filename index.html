@@ -44,6 +44,22 @@
     .history-table tr:last-child td { border-bottom: none; }
     .history-note { text-align: left !important; white-space: pre-wrap; word-break: break-all; max-height: 80px; overflow-y: auto; display: block; line-height: 1.4; padding: 0 4px; }
 
+    .matrix-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10002; justify-content: center; align-items: center; }
+    .matrix-box { background: white; width: 95%; max-width: 1100px; max-height: 85vh; border-radius: 8px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); display: flex; flex-direction: column; box-sizing: border-box; }
+    .matrix-header { font-size: 18px; font-weight: 900; color: #1366ce; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #1366ce; padding-bottom: 10px; }
+    .matrix-close-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: #888; }
+    .matrix-close-btn:hover { color: #333; }
+    .matrix-content { overflow-y: auto; flex: 1; }
+    .matrix-month-title { font-size: 16px; font-weight: 800; color: #495057; margin: 20px 0 10px 0; border-left: 4px solid #1366ce; padding-left: 8px; text-align: left; }
+    
+    .matrix-table-wrap { width: 100%; overflow-x: auto; background: transparent; margin-bottom: 15px; padding: 0 15px 0 0; box-sizing: border-box; }
+    .matrix-table { width: auto; border-collapse: collapse; font-size: 12px; text-align: center; margin: 0; border-top: 1px solid #eaeaea; border-bottom: 1px solid #eaeaea; }
+    .matrix-table th, .matrix-table td { border-top: none; border-left: none; border-bottom: 1px solid #eaeaea; border-right: 1px solid #eaeaea; }
+    .matrix-table th { background-color: #e9ecef; font-weight: bold; padding: 8px 4px; color: #333; position: sticky; top: 0; z-index: 2; border-bottom: 1px solid #ced4da; border-right: 1px solid #ced4da; }
+    .matrix-table td { padding: 6px 4px; vertical-align: middle; }
+    .matrix-table th:last-child, .matrix-table td:last-child { border-right: none; }
+    .matrix-table tbody tr:last-child td { border-bottom: none; }
+
     .academy-header-bar { margin-top: 15px; background-color: #1366ce; color: #ffffff; padding: 10px 25px; font-size: 18px; font-weight: bold; display: flex; justify-content: center; align-items: center; position: relative; }
     .academy-header-bar a { position: absolute; right: 25px; }
     
@@ -252,13 +268,22 @@
     </div>
   </div>
 
+  <div class="matrix-overlay" id="matrixOverlay" onclick="if(event.target === this) closeMatrixPopup();">
+    <div class="matrix-box">
+      <div class="matrix-header">
+        <span id="matrixTitle">선생님 학기 요약</span>
+        <button class="matrix-close-btn" onclick="closeMatrixPopup()">✕</button>
+      </div>
+      <div class="matrix-content" id="matrixContentArea"></div>
+    </div>
+  </div>
+
   <div class="academy-header-bar">
     <span id="mainTitleDisplay">체크리스트</span>
     <a id="adminLink" href="#" oncontextmenu="return false;" style="color:#a0bfdc; text-decoration:none; font-size:12px; font-weight:normal; user-select:none; -webkit-user-select:none; cursor:pointer;" onclick="if(checkLockdown(event)) return false; promptAdminCode(event);">⚙️ 관리자</a>
   </div>
 
-  <!-- 🟢 버전 표시 영역 -->
-  <div style="position: absolute; right: 25px; margin-top: 6px; font-size: 11px; color: #adb5bd; font-family: 'Pretendard', sans-serif; letter-spacing: 0.5px; z-index: 10;">v.26.07.02-02</div>
+  <div style="position: absolute; right: 25px; margin-top: 6px; font-size: 11px; color: #adb5bd; font-family: 'Pretendard', sans-serif; letter-spacing: 0.5px; z-index: 10;">v.26.07.02-03</div>
 
   <div class="app-body">
     <div class="header-bar">
@@ -388,6 +413,7 @@
             loadAttendanceWorkflow: function(teacherName, className, dateStr) { this._fetch('loadAttendanceWorkflow', {teacherName, className, dateStr}); },
             commitAttendanceToDatabase: function(payload) { this._fetch('commitAttendanceToDatabase', {payload}); },
             getStudentHistory: function(teacherName, className, studentName, dateStr) { this._fetch('getStudentHistory', {teacherName, className, studentName, dateStr}); },
+            getTeacherMatrixHistory: function(payload) { this._fetch('getTeacherMatrixHistory', payload); },
             
             _fetch: async function(action, payload = {}) {
                 const campus = document.getElementById("campusSelect").value;
@@ -694,7 +720,13 @@
     function onClassChange() {
       const classVal = document.getElementById("classSelect").value; const dateInput = document.getElementById("dateInput"); const dateDisp = document.getElementById("dateDisplayUI");
       if (classVal) {
-        dateInput.disabled = false; document.getElementById("dbClass").textContent = classVal; document.getElementById("dbTeacher").textContent = document.getElementById("teacherSelect").value;
+        dateInput.disabled = false; 
+        document.getElementById("dbClass").textContent = classVal; 
+        
+        const teacherName = document.getElementById("teacherSelect").value;
+        const searchIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="cursor:pointer; color:#1366ce; margin-left:6px;" onclick="openTeacherMatrixPopup('${teacherName}')" title="학기 요약 보기"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>`;
+        document.getElementById("dbTeacher").innerHTML = `<div style="display:inline-flex; align-items:center;">${teacherName}${searchIcon}</div>`;
+        
         document.getElementById("dbRoom").textContent = classMetaSchedule[classVal].room; document.getElementById("dbTime").textContent = classMetaSchedule[classVal].time; document.getElementById("metaDashboard").style.display = "block";
       } else { dateInput.value = ""; dateInput.disabled = true; dateDisp.textContent = "날짜를 선택하세요"; dateDisp.classList.remove('selected'); resetPanels(); }
     }
@@ -1255,6 +1287,108 @@
       }
     }
 
+    function openTeacherMatrixPopup(teacherName) {
+        const dateVal = document.getElementById("dateInput").value;
+        if (!dateVal) { showCustomAlert("조회할 날짜를 먼저 선택해 주세요."); return; }
+        
+        showLoading(true, "선생님의 학기 전체 기록을 정리 중입니다...");
+        
+        google.script.run
+            .withSuccessHandler(function(data) {
+                showLoading(false);
+                renderMatrixPopup(data);
+            })
+            .withFailureHandler(function(err) {
+                showLoading(false);
+                showCustomAlert("· Error: 데이터를 불러오지 못했습니다.<br>(" + err.message.replace(/^Error:\s*/, '').trim() + ")");
+            })
+            .getTeacherMatrixHistory({teacherName: teacherName, dateStr: dateVal});
+    }
+
+    function renderMatrixPopup(data) {
+        if (data.error) { showCustomAlert("· Error: " + data.error.replace(/^Error:\s*/, '').trim()); return; }
+        
+        let sumHtml = "";
+        if (data.summary) {
+            let subjPct = data.summary.subjExpected > 0 ? Math.min(100, Math.round((data.summary.subjDone / data.summary.subjExpected) * 100)) : 0;
+            let sentPct = data.summary.sentExpected > 0 ? Math.min(100, Math.round((data.summary.sentDone / data.summary.sentExpected) * 100)) : 100;
+            
+            let subjStyle = subjPct < 100 ? "color:#dc3545; font-weight:bold;" : "color:inherit;";
+            let sentStyle = sentPct < 100 ? "color:#dc3545; font-weight:bold;" : "color:inherit;";
+            
+            sumHtml = ` <span style="font-size:14px; font-weight:normal;">( 이번 학기 수업개요입력 <span style="${subjStyle}">${subjPct}%</span> &nbsp;|&nbsp; 발송완료체크 <span style="${sentStyle}">${sentPct}%</span> )</span>`;
+        }
+        document.getElementById("matrixTitle").innerHTML = `<b>${data.teacherName}</b> 선생님 학기 요약${sumHtml}`;
+        
+        const contentArea = document.getElementById("matrixContentArea");
+        contentArea.innerHTML = "";
+        
+        if (!data.classes || data.classes.length === 0) {
+            contentArea.innerHTML = '<div style="padding: 40px; text-align:center; color:#888; font-weight:bold;">해당 학기에 배정된 수업이 없습니다.</div>';
+            document.getElementById("matrixOverlay").style.display = "flex";
+            return;
+        }
+        
+        let html = "";
+        data.months.forEach(monthObj => {
+            html += `<div class="matrix-month-title">${monthObj.month}</div>`;
+            html += `<div class="matrix-table-wrap">
+                        <table class="matrix-table">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2" style="width:80px; position:sticky; left:0; z-index:3; background-color:#e9ecef;">날짜</th>`;
+            
+            data.classes.forEach(cName => {
+                html += `<th colspan="2" style="font-size:12px; padding:8px 4px; width:190px; max-width:190px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${cName}</th>`;
+            });
+            html += `</tr><tr>`;
+            
+            data.classes.forEach(cName => {
+                html += `<th style="font-size:11px; padding:6px 2px; width:95px;">수업개요</th><th style="font-size:11px; padding:6px 2px; width:95px;">발송완료</th>`;
+            });
+            html += `</tr></thead><tbody>`;
+            
+            monthObj.rows.forEach(row => {
+                let dateParts = row.date.split('-');
+                let dStr = `${dateParts[1]}/${dateParts[2]}`;
+                let dayNames = ["일", "월", "화", "수", "목", "금", "토"];
+                
+                let dayColor = row.dayNum === 0 || row.isHoliday ? "color:#dc3545;" : (row.dayNum === 6 ? "color:#1366ce;" : "color:#333;");
+                let dateDisplay = `<span style="${dayColor}">${dStr}(${dayNames[row.dayNum]})</span>`;
+                
+                let bgStyle = row.isOutOfBounds ? 'background-color:#f4f5f7;' : '';
+                let cellBgColor = row.isOutOfBounds ? '#f4f5f7' : '#fff';
+                
+                html += `<tr style="${bgStyle}">
+                            <td style="font-weight:bold; position:sticky; left:0; background-color:${cellBgColor}; z-index:1;">${dateDisplay}</td>`;
+                            
+                data.classes.forEach(cName => {
+                    let cellData = row.classes[cName];
+                    if (!cellData.isActive) {
+                        html += `<td style="background-color:#f8f9fa;"></td><td style="background-color:#f8f9fa;"></td>`;
+                    } else if (cellData.isHolidayEmpty) {
+                        html += `<td colspan="2" style="color:#dc3545; font-weight:bold; font-size:11px; background-color:#fff0f0;">${cellData.holidayName}</td>`;
+                    } else {
+                        let subjStyle = (!cellData.subjComplete && cellData.activeCount > 0) ? 'color:#dc3545; font-weight:bold;' : 'color:#333;';
+                        let sentStyle = (!cellData.sentComplete && cellData.activeCount > 0) ? 'color:#dc3545; font-weight:bold;' : 'color:#333;';
+                        html += `<td style="${subjStyle}">${cellData.subject}</td>
+                                 <td style="${sentStyle}">${cellData.sent}</td>`;
+                    }
+                });
+                html += `</tr>`;
+            });
+            
+            html += `</tbody></table></div>`;
+        });
+        
+        contentArea.innerHTML = html;
+        document.getElementById("matrixOverlay").style.display = "flex";
+    }
+
+    function closeMatrixPopup() {
+        document.getElementById("matrixOverlay").style.display = "none";
+    }
+
     function openHistoryPopup(studentName) {
       const teacher = document.getElementById("teacherSelect").value;
       const className = document.getElementById("classSelect").value;
@@ -1309,6 +1443,11 @@
       const modal = document.getElementById('customModalOverlay');
       
       if (e.key === 'Escape') {
+          const matrixOverlay = document.getElementById('matrixOverlay');
+          if (matrixOverlay && matrixOverlay.style.display === 'flex') {
+              closeMatrixPopup();
+              return;
+          }
           const historyOverlay = document.getElementById('historyOverlay');
           if (historyOverlay && historyOverlay.style.display === 'flex') {
               closeHistoryPopup();
