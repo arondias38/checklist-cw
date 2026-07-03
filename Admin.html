@@ -398,8 +398,7 @@
     <a id="teacherLink" href="#" style="color:#ffffff; text-decoration:none; font-size:14px;" onclick="handleTeacherLinkClick(event)">⬅️ 선생님 모드로 돌아가기</a>
   </div>
 
-  <!-- 🟢 버전 표시 영역 -->
-  <div style="position: absolute; right: 25px; margin-top: 6px; font-size: 11px; color: #adb5bd; font-family: 'Pretendard', sans-serif; letter-spacing: 0.5px; z-index: 10;">v.26.07.03-01</div>
+  <div style="position: absolute; right: 25px; margin-top: 6px; font-size: 11px; color: #adb5bd; font-family: 'Pretendard', sans-serif; letter-spacing: 0.5px; z-index: 10;">v.26.07.03-02</div>
 
   <div class="app-body">
     <div class="header-bar">
@@ -482,7 +481,8 @@
             getTermListForEdit: function() { this._fetch('getTermListForEdit'); },
             applyTermModifications: function(payload) { this._fetch('applyTermModifications', payload); },
             
-            _fetch: async function(action, payload = {}) {
+            // 🟢 [NEW] 스마트 재시도(Auto-Retry) 로직 추가
+            _fetch: async function(action, payload = {}, retries = 2) {
                 const campus = document.getElementById("campusSelect").value;
                 if (!campus) {
                     if (this.failureCb) this.failureCb(new Error("캠퍼스를 먼저 선택해 주세요."));
@@ -497,7 +497,15 @@
                         body: JSON.stringify({ action: action, ...payload })
                     });
                     
-                    if (!response.ok) throw new Error(`서버 상태 이상 (${response.status})`);
+                    if (!response.ok) {
+                        // 404 등 네트워크 오류 발생 시 조용히 재시도 (최대 3회)
+                        if (response.status === 404 && retries > 0) {
+                            console.warn(`404 통신 오류, 0.8초 후 재시도합니다... (남은 횟수: ${retries})`);
+                            await new Promise(r => setTimeout(r, 800));
+                            return this._fetch(action, payload, retries - 1);
+                        }
+                        throw new Error(`서버 상태 이상 (${response.status})`);
+                    }
                     
                     let text = await response.text();
                     let result;
@@ -514,8 +522,16 @@
                         else showCustomAlert("· Error: 서버 오류가 발생했습니다.<br>(" + result.error.replace(/^Error:\s*/, '').trim() + ")");
                     }
                 } catch (e) {
-                    let errorMsg = "";
                     let rawError = e.message || String(e);
+                    
+                    // 네트워크 끊김이나 404 에러일 경우 화면에 띄우기 전에 재시도
+                    if (retries > 0 && (rawError.includes("Failed to fetch") || rawError.includes("NetworkError") || rawError.includes("404") || rawError.includes("JSON_PARSE_ERROR"))) {
+                        console.warn(`네트워크 오류, 0.8초 후 재시도합니다... (남은 횟수: ${retries})`);
+                        await new Promise(r => setTimeout(r, 800));
+                        return this._fetch(action, payload, retries - 1);
+                    }
+
+                    let errorMsg = "";
                     if (rawError.includes("JSON_PARSE_ERROR") || rawError.includes("Unexpected token") || rawError.includes("SyntaxError")) {
                         errorMsg = "서버 통신이 지연되었거나 보안 세션이 만료되었습니다.<br>키보드의 <b>[새로고침(F5)]</b>을 눌러 다시 시도해 주세요.";
                     } else if (rawError.includes("Failed to fetch") || rawError.includes("NetworkError")) {
@@ -1361,7 +1377,7 @@
             let eD = mod.newEnd || termManageData.find(t=>t.name === mod.originalName).end;
             if(sD > eD) {
                 let n = mod.newName || mod.originalName;
-                showCustomAlert(`[${n}]의 종료 날짜가 시작 날짜보다 빠를 수문을 수 없습니다.`);
+                showCustomAlert(`[${n}]의 종료 날짜가 시작 날짜보다 빠를 수 없습니다.`);
                 return;
             }
         }
