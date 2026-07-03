@@ -283,7 +283,7 @@
     <a id="adminLink" href="#" oncontextmenu="return false;" style="color:#a0bfdc; text-decoration:none; font-size:12px; font-weight:normal; user-select:none; -webkit-user-select:none; cursor:pointer;" onclick="if(checkLockdown(event)) return false; promptAdminCode(event);">⚙️ 관리자</a>
   </div>
 
-  <div style="position: absolute; right: 25px; margin-top: 6px; font-size: 11px; color: #adb5bd; font-family: 'Pretendard', sans-serif; letter-spacing: 0.5px; z-index: 10;">v.26.07.03-01</div>
+  <div style="position: absolute; right: 25px; margin-top: 6px; font-size: 11px; color: #adb5bd; font-family: 'Pretendard', sans-serif; letter-spacing: 0.5px; z-index: 10;">v.26.07.03-02</div>
 
   <div class="app-body">
     <div class="header-bar">
@@ -415,7 +415,8 @@
             getStudentHistory: function(teacherName, className, studentName, dateStr) { this._fetch('getStudentHistory', {teacherName, className, studentName, dateStr}); },
             getTeacherMatrixHistory: function(payload) { this._fetch('getTeacherMatrixHistory', payload); },
             
-            _fetch: async function(action, payload = {}) {
+            // 🟢 [NEW] 스마트 재시도(Auto-Retry) 로직 추가
+            _fetch: async function(action, payload = {}, retries = 2) {
                 const campus = document.getElementById("campusSelect").value;
                 if (!campus) {
                     if (this.failureCb) this.failureCb(new Error("캠퍼스를 먼저 선택해 주세요."));
@@ -430,7 +431,15 @@
                         body: JSON.stringify({ action: action, ...payload })
                     });
                     
-                    if (!response.ok) throw new Error(`서버 상태 이상 (${response.status})`);
+                    if (!response.ok) {
+                        // 404 등 네트워크 오류 발생 시 조용히 재시도 (최대 3회)
+                        if (response.status === 404 && retries > 0) {
+                            console.warn(`404 통신 오류, 0.8초 후 재시도합니다... (남은 횟수: ${retries})`);
+                            await new Promise(r => setTimeout(r, 800));
+                            return this._fetch(action, payload, retries - 1);
+                        }
+                        throw new Error(`서버 상태 이상 (${response.status})`);
+                    }
                     
                     let text = await response.text();
                     let result;
@@ -447,8 +456,16 @@
                         else showCustomAlert("· Error: 서버 오류가 발생했습니다.<br>(" + result.error.replace(/^Error:\s*/, '').trim() + ")");
                     }
                 } catch (e) {
-                    let errorMsg = "";
                     let rawError = e.message || String(e);
+                    
+                    // 네트워크 끊김이나 404 에러일 경우 화면에 띄우기 전에 재시도
+                    if (retries > 0 && (rawError.includes("Failed to fetch") || rawError.includes("NetworkError") || rawError.includes("404") || rawError.includes("JSON_PARSE_ERROR"))) {
+                        console.warn(`네트워크 오류, 0.8초 후 재시도합니다... (남은 횟수: ${retries})`);
+                        await new Promise(r => setTimeout(r, 800));
+                        return this._fetch(action, payload, retries - 1);
+                    }
+
+                    let errorMsg = "";
                     if (rawError.includes("JSON_PARSE_ERROR") || rawError.includes("Unexpected token") || rawError.includes("SyntaxError")) {
                         errorMsg = "서버 통신이 지연되었거나 보안 세션이 만료되었습니다.<br>키보드의 <b>[새로고침(F5)]</b>을 눌러 다시 시도해 주세요.";
                     } else if (rawError.includes("Failed to fetch") || rawError.includes("NetworkError")) {
@@ -1044,7 +1061,6 @@
              }
           };
 
-          // 🟢 [NEW] 한글(HWP) 및 엑셀 스마트 다중 붙여넣기 로직 (줄바꿈/큰따옴표/HTML 표 완벽 해독)
           input.onpaste = function(e) {
              e.preventDefault();
              let clipboardData = (e.clipboardData || window.clipboardData);
@@ -1056,16 +1072,12 @@
 
              let rows = [];
 
-             // 1. 한글(HWP) 표나 웹 표 복사 시, 탭(\t) 없이 줄바꿈으로만 셀이 구분되어 
-             // '하나의 열에만 들어가는' 현상을 방지하기 위해 HTML 테이블 파싱을 우선 시도합니다.
-             // 단, 기존 엑셀 복사(탭 포함)는 기존의 완벽한 텍스트 파서를 타도록 분기합니다.
              let hasTabs = pasteText && pasteText.includes('\t');
              let useHtmlParser = !hasTabs && htmlData && /<table/i.test(htmlData);
 
              if (useHtmlParser) {
                  try {
                      let tempDiv = document.createElement('div');
-                     // 스타일과 스크립트를 제거하여 안전하게 DOM 생성
                      let safeHtml = htmlData.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
                                             .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '');
                      tempDiv.innerHTML = safeHtml;
@@ -1078,21 +1090,17 @@
                              let tds = tr.querySelectorAll('th, td');
                              tds.forEach(td => {
                                  let cellHtml = td.innerHTML;
-                                 // 한글(HWP) 및 웹 표의 줄바꿈(<p>, <br>, <div>)을 텍스트 \n으로 변환
                                  cellHtml = cellHtml.replace(/<br\s*[\/]?>/gi, '\n')
                                                     .replace(/<\/p>/gi, '\n')
                                                     .replace(/<\/div>/gi, '\n')
                                                     .replace(/<tr[^>]*>/gi, '\n'); 
                                  
-                                 // 나머지 모든 HTML 태그 제거
                                  let text = cellHtml.replace(/<[^>]+>/g, '');
                                  
-                                 // HTML 엔티티 (예: &nbsp;) 디코딩
                                  let decoder = document.createElement('textarea');
                                  decoder.innerHTML = text;
                                  text = decoder.value;
                                  
-                                 // 양쪽 공백 및 끝에 불필요하게 남은 줄바꿈 제거 (trim)
                                  rowArr.push(text.trim());
                              });
                              if (rowArr.length > 0) {
@@ -1102,11 +1110,10 @@
                      }
                  } catch (err) {
                      console.error("HTML 표 파싱 에러:", err);
-                     rows = []; // 에러 시 빈 배열로 초기화하여 아래 텍스트 파서로 자연스럽게 넘어가도록 함
+                     rows = []; 
                  }
              }
 
-             // 2. HTML 파싱을 안 했거나 파싱 결과가 없다면, 기존 엑셀 스마트 텍스트 파서 실행 (기존 코드 100% 유지)
              if (rows.length === 0 && pasteText) {
                  let currentRow = [];
                  let currentCell = "";
@@ -1119,7 +1126,7 @@
                      if (inQuotes) {
                          if (char === '"' && nextChar === '"') {
                              currentCell += '"';
-                             i++; // 겹쳐진 따옴표 하나는 건너뜀
+                             i++; 
                          } else if (char === '"') {
                              inQuotes = false;
                          } else {
@@ -1147,19 +1154,16 @@
                          }
                      }
                  }
-                 // 마지막 남은 데이터 밀어넣기
                  if (currentCell !== "" || currentRow.length > 0) {
                      currentRow.push(currentCell);
                      rows.push(currentRow);
                  }
 
-                 // 엑셀에서 복사 시 마지막에 생기는 의미 없는 빈 줄 완벽 제거
                  if (rows.length > 0 && rows[rows.length - 1].length === 1 && rows[rows.length - 1][0] === "") {
                      rows.pop();
                  }
              }
 
-             // 3. 추출된 rows 데이터를 화면(input)에 매핑 (기존과 동일)
              let startRow = parseInt(this.dataset.row);
              let startCol = parseInt(this.dataset.col);
 
@@ -1167,12 +1171,9 @@
 
              for (let i = 0; i < rows.length; i++) {
                  let targetRowIdx = startRow + i;
-                 // 앱에 띄워진 학생 수를 초과하면 방어
                  if (targetRowIdx >= studentList.length) break;
-                 // 퇴원생 등 입력 불가 칸 통과
                  if (studentList[targetRowIdx].isDischarged || studentList[targetRowIdx].pendingDischarge) continue;
 
-                 // 실수로 복사된 완전히 텅 빈 줄(행)은 데이터 덮어쓰기 방지
                  let isRowEmpty = rows[i].every(cell => cell.trim() === "");
                  if (isRowEmpty) continue;
 
