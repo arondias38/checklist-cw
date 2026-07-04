@@ -398,7 +398,6 @@
     <a id="teacherLink" href="#" style="color:#ffffff; text-decoration:none; font-size:14px;" onclick="handleTeacherLinkClick(event)">⬅️ 선생님 모드로 돌아가기</a>
   </div>
 
-  <!-- 🟢 버전 표시 영역 -->
   <div style="position: absolute; right: 25px; margin-top: 6px; font-size: 11px; color: #adb5bd; font-family: 'Pretendard', sans-serif; letter-spacing: 0.5px; z-index: 10;">v.26.07.04-01</div>
 
   <div class="app-body">
@@ -907,11 +906,15 @@
                  chunk.details.forEach((r, idx) => {
                     let leadCheckHtml = `<input type="checkbox" class="lead-check-${group.teacher} chunk-${group.teacher}-${clsName.replace(/\s+/g,'_')}" data-row="${r.rowIdx}" onchange="trackLeadCheck('${group.teacher}', parseInt(this.dataset.row), this.checked)" ${r.leadCheck ? 'checked' : ''}>`;
                     let sendCheckHtml = `<input type="checkbox" ${r.sendCheck ? 'checked' : ''} disabled>`;
-                    let noteHtml = r.sendCheck === false && r.note === "퇴원" ? `<div class="readonly-text" style="color:#dc3545; font-weight:bold;">퇴원</div>` : `<div class="readonly-note">${r.note || '-'}</div>`;
+                    
+                    // 🟢 [수정] 관리자 화면에 줄바꿈 대신 기호( ↵ ) 원형을 그대로 노출하도록 처리
+                    let displaySubject = r.subject ? r.subject.replace(/\n/g, ' ↵ ') : '-';
+                    let displayNoteStr = r.note ? r.note.replace(/\n/g, ' ↵ ') : '-';
+                    let noteHtml = r.sendCheck === false && r.note === "퇴원" ? `<div class="readonly-text" style="color:#dc3545; font-weight:bold;">퇴원</div>` : `<div class="readonly-note">${displayNoteStr}</div>`;
                     
                     let searchIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="cursor:pointer; color:#555;" onclick="openHistoryPopup('${group.teacher}', '${clsName}', '${r.studentName}')" title="기록 보기"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>`;
                     
-                    html += `<tr><td style="background-color:#f8f9fa;">${String(idx + 1).padStart(2, '0')}</td><td style="padding-right:6px;"><div class="readonly-text" style="position:relative; display:flex; justify-content:center; align-items:center; width:100%; min-height:20px;"><b>${r.studentName}</b><div style="position:absolute; right:2px; display:flex;">${searchIcon}</div></div></td><td><div class="readonly-text">${r.school || '-'}</div></td><td><div class="readonly-text">${r.grade || '-'}</div></td><td><div class="readonly-note">${r.subject || '-'}</div></td><td><div class="readonly-text">${r.evalScore || '-'}</div></td><td><div class="readonly-text">${r.wrongScore || '-'}</div></td><td><div class="readonly-text">${r.dailyTest || '-'}</div></td><td><div class="readonly-text">${r.weeklyTest || '-'}</div></td><td>${noteHtml}</td><td>${sendCheckHtml}</td><td>${leadCheckHtml}</td></tr>`;
+                    html += `<tr><td style="background-color:#f8f9fa;">${String(idx + 1).padStart(2, '0')}</td><td style="padding-right:6px;"><div class="readonly-text" style="position:relative; display:flex; justify-content:center; align-items:center; width:100%; min-height:20px;"><b>${r.studentName}</b><div style="position:absolute; right:2px; display:flex;">${searchIcon}</div></div></td><td><div class="readonly-text">${r.school || '-'}</div></td><td><div class="readonly-text">${r.grade || '-'}</div></td><td><div class="readonly-note">${displaySubject}</div></td><td><div class="readonly-text">${r.evalScore || '-'}</div></td><td><div class="readonly-text">${r.wrongScore || '-'}</div></td><td><div class="readonly-text">${r.dailyTest || '-'}</div></td><td><div class="readonly-text">${r.weeklyTest || '-'}</div></td><td>${noteHtml}</td><td>${sendCheckHtml}</td><td>${leadCheckHtml}</td></tr>`;
                  });
                  html += `</tbody></table>`;
              });
@@ -1361,7 +1364,7 @@
             let eD = mod.newEnd || termManageData.find(t=>t.name === mod.originalName).end;
             if(sD > eD) {
                 let n = mod.newName || mod.originalName;
-                showCustomAlert(`[${n}]의 종료 날짜가 시작 날짜보다 빠를 수문을 수 없습니다.`);
+                showCustomAlert(`[${n}]의 종료 날짜가 시작 날짜보다 빠를 수 없습니다.`);
                 return;
             }
         }
