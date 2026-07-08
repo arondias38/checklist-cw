@@ -49,11 +49,11 @@
     .matrix-header { font-size: 18px; font-weight: 900; color: #1366ce; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #1366ce; padding-bottom: 10px; }
     .matrix-close-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: #888; }
     .matrix-close-btn:hover { color: #333; }
-    .matrix-content { overflow-y: auto; flex: 1; }
+    .matrix-content { overflow: auto; flex: 1; }
     .matrix-month-title { font-size: 16px; font-weight: 800; color: #495057; margin: 20px 0 10px 0; border-left: 4px solid #1366ce; padding-left: 8px; text-align: left; }
     
-    .matrix-table-wrap { width: 100%; overflow-x: auto; background: transparent; margin-bottom: 15px; padding: 0 15px 0 0; box-sizing: border-box; }
-    .matrix-table { width: auto; border-collapse: collapse; font-size: 12px; text-align: center; margin: 0; border-top: 1px solid #eaeaea; border-bottom: 1px solid #eaeaea; }
+    .matrix-table-wrap { width: max-content; background: transparent; margin-bottom: 15px; padding: 0 15px 0 0; box-sizing: border-box; }
+    .matrix-table { width: max-content; border-collapse: collapse; font-size: 12px; text-align: center; margin: 0; border-top: 1px solid #eaeaea; border-bottom: 1px solid #eaeaea; }
     .matrix-table th, .matrix-table td { border-top: none; border-left: none; border-bottom: 1px solid #eaeaea; border-right: 1px solid #eaeaea; }
     .matrix-table th { background-color: #e9ecef; font-weight: bold; padding: 8px 4px; color: #333; position: sticky; top: 0; z-index: 2; border-bottom: 1px solid #ced4da; border-right: 1px solid #ced4da; }
     .matrix-table td { padding: 6px 4px; vertical-align: middle; }
@@ -1388,15 +1388,24 @@
                         <table class="matrix-table">
                             <thead>
                                 <tr>
-                                    <th rowspan="2" style="width:80px; position:sticky; left:0; z-index:3; background-color:#e9ecef;">날짜</th>`;
+                                    <th rowspan="2" style="padding:0; position:sticky; left:0; z-index:3; background-color:#e9ecef;">
+                                        <div style="width: 80px; text-align: center; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">날짜</div>
+                                    </th>`;
             
             data.classes.forEach(cName => {
-                html += `<th colspan="2" style="font-size:12px; padding:8px 4px; width:190px; max-width:190px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${cName}</th>`;
+                html += `<th colspan="2" style="padding:0;">
+                             <div style="width: 190px; padding: 8px 0; margin: 0 auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 12px; box-sizing: border-box;">${cName}</div>
+                         </th>`;
             });
             html += `</tr><tr>`;
             
             data.classes.forEach(cName => {
-                html += `<th style="font-size:11px; padding:6px 2px; width:95px;">수업개요</th><th style="font-size:11px; padding:6px 2px; width:95px;">발송완료</th>`;
+                html += `<th style="padding:0;">
+                             <div style="width: 95px; padding: 6px 0; margin: 0 auto; font-size: 11px; box-sizing: border-box;">수업개요</div>
+                         </th>
+                         <th style="padding:0;">
+                             <div style="width: 95px; padding: 6px 0; margin: 0 auto; font-size: 11px; box-sizing: border-box;">발송완료</div>
+                         </th>`;
             });
             html += `</tr></thead><tbody>`;
             
