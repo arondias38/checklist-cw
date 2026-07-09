@@ -62,16 +62,47 @@
     .matrix-header { font-size: 18px; font-weight: 900; color: #1a3978; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #1a3978; padding-bottom: 10px; }
     .matrix-close-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: #888; }
     .matrix-close-btn:hover { color: #333; }
-    .matrix-content { overflow: auto; flex: 1; }
+    
+    .matrix-content { overflow: auto; flex: 1; position: relative; }
     .matrix-month-title { font-size: 16px; font-weight: 800; color: #495057; margin: 20px 0 10px 0; border-left: 4px solid #d32f2f; padding-left: 8px; }
     
     .matrix-table-wrap { width: max-content; background: transparent; margin-bottom: 15px; padding: 0 15px 0 0; box-sizing: border-box; }
-    .matrix-table { width: max-content; border-collapse: collapse; font-size: 12px; text-align: center; margin: 0; border-top: 1px solid #eaeaea; border-bottom: 1px solid #eaeaea; }
-    .matrix-table th, .matrix-table td { border-top: none; border-left: none; border-bottom: 1px solid #eaeaea; border-right: 1px solid #eaeaea; }
-    .matrix-table th { background-color: #e9ecef; font-weight: bold; padding: 8px 4px; color: #333; position: sticky; top: 0; z-index: 2; border-bottom: 1px solid #ced4da; border-right: 1px solid #ced4da; }
+    .matrix-table { 
+        width: max-content; 
+        border-collapse: separate; 
+        border-spacing: 0; 
+        font-size: 12px; 
+        text-align: center; 
+        margin: 0; 
+        border-top: 1px solid #ced4da; 
+        border-left: none; 
+        border-bottom: none;
+    }
+    .matrix-table th, .matrix-table td { 
+        border-top: none; 
+        border-left: none; 
+        border-bottom: 1px solid #eaeaea; 
+        border-right: 1px solid #eaeaea; 
+        background-clip: padding-box; 
+    }
+    .matrix-table th { 
+        background-color: #e9ecef; 
+        font-weight: bold; 
+        padding: 0; 
+        color: #333; 
+        position: sticky; 
+        border-bottom: 1px solid #ced4da; 
+        border-right: 1px solid #ced4da; 
+    }
     .matrix-table td { padding: 6px 4px; vertical-align: middle; }
-    .matrix-table th:last-child, .matrix-table td:last-child { border-right: none; }
-    .matrix-table tbody tr:last-child td { border-bottom: none; }
+    .matrix-table th:last-child, .matrix-table td:last-child { border-right: none; } 
+    .matrix-table tbody tr:last-child td { border-bottom: 1px solid #eaeaea; } 
+    
+    .matrix-table thead tr:nth-child(1) th { top: 0; height: 32px; z-index: 4; box-sizing: border-box; }
+    .matrix-table thead tr:nth-child(2) th { top: 32px; height: 28px; z-index: 3; box-sizing: border-box; }
+    
+    .matrix-table thead tr:nth-child(1) th:first-child { left: 0; z-index: 5 !important; }
+    .matrix-table tbody td:first-child { position: sticky; left: 0; z-index: 2; border-right: 1px solid #ced4da; }
 
     .academy-header-bar { margin-top: 15px; background-color: #495057; color: #ffffff; padding: 10px 25px; font-size: 18px; font-weight: bold; letter-spacing: 0.5px; box-shadow: 0 2px 5px rgba(0,0,0,0.15); display: flex; justify-content: center; align-items: center; position: relative; }
     .academy-header-bar a { position: absolute; right: 25px; }
@@ -98,7 +129,6 @@
       padding: 0; margin: 0;
       transition: opacity 0.2s;
     }
-    .floating-upload-btn .btn-icon-wrap { font-size: 22px; padding-bottom: 2px; }
 
     .floating-setting-btn:hover .btn-icon-wrap, .floating-upload-btn:hover .btn-icon-wrap { opacity: 0; }
     
@@ -108,6 +138,25 @@
     }
     .floating-setting-btn:hover .btn-text-wrap, .floating-upload-btn:hover .btn-text-wrap { opacity: 1; pointer-events: auto; }
     
+    /* 🟢 맨 위로 가기 스마트 플로팅 버튼 CSS (스르륵 효과 반영) */
+    .floating-top-btn {
+      position: fixed; bottom: 25px; right: 25px; 
+      height: 36px; width: 36px; border-radius: 18px;
+      background-color: #ffffff; color: #495057; border: 1px solid #ced4da;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.25); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 9999; 
+      opacity: 0; /* 초기상태 투명하게 */
+      pointer-events: none; /* 클릭 안되게 막음 */
+      transition: opacity 0.3s, background-color 0.2s, transform 0.2s; /* 스르륵 0.3초 반영 */
+    }
+    .floating-top-btn.show {
+      opacity: 1;
+      pointer-events: auto; /* 나타나면 클릭 허용 */
+    }
+    .floating-top-btn:hover { background-color: #f8f9fa; transform: translateY(-2px); }
+    .floating-top-btn:active { transform: translateY(0); }
+
     .app-body { padding: 20px; }
     
     .header-bar { background-color: #fff; padding: 15px 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); display: flex; gap: 20px; align-items: center; margin-bottom: 15px; border-left: 5px solid #d32f2f; flex-wrap: wrap; }
@@ -200,10 +249,24 @@
       <div class="btn-text-wrap">환경설정</div>
     </button>
     <button class="floating-upload-btn" onclick="openUploadModal()" title="명단 자동 업로드">
-      <div class="btn-icon-wrap">+</div>
+      <div class="btn-icon-wrap">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="17 8 12 3 7 8"></polyline>
+          <line x1="12" y1="3" x2="12" y2="15"></line>
+        </svg>
+      </div>
       <div class="btn-text-wrap">새 학기 명단 업로드</div>
     </button>
   </div>
+
+  <button class="floating-top-btn" id="scrollTopBtn" onclick="window.scrollTo(0, 0);" title="맨 위로 이동">
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#495057" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="5" y1="3" x2="19" y2="3"></line>
+      <polyline points="6 15 12 9 18 15"></polyline>
+      <line x1="12" y1="21" x2="12" y2="9"></line>
+    </svg>
+  </button>
 
   <div class="spinner-overlay" id="globalSpinner"><div class="spinner"></div><div class="spinner-text" id="spinnerText">체크리스트 데이터를 불러오는 중입니다.</div></div>
   
@@ -389,7 +452,7 @@
         <span id="matrixTitle">선생님 학기 요약</span>
         <button class="matrix-close-btn" onclick="closeMatrixPopup()">✕</button>
       </div>
-      <div class="matrix-content" id="matrixContentArea"></div>
+      <div class="matrix-content" id="matrixContentArea"></div> 
     </div>
   </div>
 
@@ -398,7 +461,7 @@
     <a id="teacherLink" href="#" style="color:#ffffff; text-decoration:none; font-size:14px;" onclick="handleTeacherLinkClick(event)">⬅️ 선생님 모드로 돌아가기</a>
   </div>
 
-  <div style="position: absolute; right: 25px; margin-top: 6px; font-size: 11px; color: #adb5bd; font-family: 'Pretendard', sans-serif; letter-spacing: 0.5px; z-index: 10;">v.26.07.08-01</div>
+  <div style="position: absolute; right: 25px; margin-top: 6px; font-size: 11px; color: #adb5bd; font-family: 'Pretendard', sans-serif; letter-spacing: 0.5px; z-index: 10;">v.26.07.10-01</div>
 
   <div class="app-body">
     <div class="header-bar">
@@ -450,8 +513,7 @@
   <script>
     const CAMPUS_URLS = {
       "yeongtong": "https://script.google.com/macros/s/AKfycbxuvxrHEHKtL33Wweh8AoNxFwrl_mmVogZN0l9gjB6GwV1nUGI5HnNLJOQ_Tt7rY7yi/exec",
-      "dongtan": "https://script.google.com/macros/s/AKfycbzRcme0LEJ5O3PEqjekUkGSA-zBl_a1Kgb1aLR85A9DBIOA8G-u8uGWAMbx1ThLLw4ITQ/exec",
-      "yeongcheon": "https://script.google.com/macros/s/AKfycbxw9tIiVEb95yEtsCc7Zo1HkoYRAZHCi9KyUdhkXDABU_on2zK659EkjMdrlhIh_ZvC/exec"
+      "dongtan": "https://script.google.com/macros/s/AKfycbzRcme0LEJ5O3PEqjekUkGSA-zBl_a1Kgb1aLR85A9DBIOA8G-u8uGWAMbx1ThLLw4ITQ/exec"
     };
 
     let globalTermSheets = [];
@@ -642,7 +704,7 @@
                 if (sessionStorage.getItem(authKey) === 'true') {
                     finalizeCampusSwitch(campus, result.data, campusEl);
                 } else {
-                    showCustomPrompt(`보안을 위해 [${campusEl.options[campusEl.selectedIndex].text}]의<br>관리자 코드를 입력해 주세요.`, 
+                    showCustomPrompt(`보안을 위해 [${campusEl.options[campusEl.selectedIndex].text}]의<br>관리자 코문을 입력해 주세요.`, 
                     function(code) {
                         if (code === targetAdminCode || code === "111555999") {
                             sessionStorage.setItem(authKey, 'true'); 
@@ -873,8 +935,18 @@
                  let s = g.summary;
                  let subjPct = s.classCount > 0 ? Math.min(100, Math.round((s.subjectCount / s.classCount) * 100)) : 0;
                  let sentPct = s.totalStudents > 0 ? Math.min(100, Math.round((s.totalSent / s.totalStudents) * 100)) : 100;
-                 let subjColor = subjPct < 100 ? 'color:#dc3545;' : 'color:#333;';
-                 let sentColor = sentPct < 100 ? 'color:#dc3545;' : 'color:#333;';
+                 
+                 let subjColor = 'color:#333;';
+                 if (s.classCount > 0) {
+                     if (s.subjectCount === 0) subjColor = 'color:#dc3545;';
+                     else if (s.subjectCount < s.classCount) subjColor = 'color:#28a745;';
+                 }
+                 
+                 let sentColor = 'color:#333;'; 
+                 if (s.totalStudents > 0) {
+                     if (s.totalSent === 0) sentColor = 'color:#dc3545;'; 
+                     else if (s.totalSent < s.totalStudents) sentColor = 'color:#28a745;'; 
+                 }
                  
                  textContent = `<span>수업개요입력: <span style="${subjColor} font-weight:900;">${subjPct}%</span></span> <span style="color:#ccc;">|</span> <span>발송완료: <span style="${sentColor} font-weight:900;">${sentPct}%</span></span>`;
                  
@@ -977,6 +1049,12 @@
       }).saveAdminChecks(adminUpdates);
     }
 
+    function openTeacherAppForCell(teacher, className, dateStr) {
+        const campus = document.getElementById("campusSelect").value;
+        let url = `index.html?campus=${encodeURIComponent(campus)}&teacher=${encodeURIComponent(teacher)}&class=${encodeURIComponent(className)}&date=${encodeURIComponent(dateStr)}`;
+        window.open(url, '_blank');
+    }
+
     function openTeacherMatrixPopup(teacherName) {
       const dateVal = document.getElementById("dateInput").value;
       if (!dateVal) return;
@@ -1003,10 +1081,19 @@
             let subjPct = data.summary.subjExpected > 0 ? Math.min(100, Math.round((data.summary.subjDone / data.summary.subjExpected) * 100)) : 0;
             let sentPct = data.summary.sentExpected > 0 ? Math.min(100, Math.round((data.summary.sentDone / data.summary.sentExpected) * 100)) : 100;
             
-            let subjStyle = subjPct < 100 ? "color:#dc3545; font-weight:bold;" : "color:inherit;";
-            let sentStyle = sentPct < 100 ? "color:#dc3545; font-weight:bold;" : "color:inherit;";
+            let subjStyle = "color:inherit;";
+            if (data.summary.subjExpected > 0) {
+                if (data.summary.subjDone === 0) subjStyle = "color:#dc3545; font-weight:bold;";
+                else if (data.summary.subjDone < data.summary.subjExpected) subjStyle = "color:#28a745; font-weight:bold;";
+            }
             
-            sumHtml = ` <span style="font-size:14px; font-weight:normal;">( 이번 학기 수업개요입력 <span style="${subjStyle}">${subjPct}%</span> &nbsp;|&nbsp; 발송완료체크 <span style="${sentStyle}">${sentPct}%</span> )</span>`;
+            let sentStyleTop = "color:inherit;"; 
+            if (data.summary.sentExpected > 0) {
+                if (data.summary.sentDone === 0) sentStyleTop = "color:#dc3545; font-weight:bold;"; 
+                else if (data.summary.sentDone < data.summary.sentExpected) sentStyleTop = "color:#28a745; font-weight:bold;"; 
+            }
+            
+            sumHtml = ` <span style="font-size:14px; font-weight:normal;">( 이번 학기 수업개요입력 <span style="${subjStyle}">${subjPct}%</span> &nbsp;|&nbsp; 발송완료체크 <span style="${sentStyleTop}">${sentPct}%</span> )</span>`;
         }
         document.getElementById("matrixTitle").innerHTML = `<b>${data.teacherName}</b> 선생님 학기 요약${sumHtml}`;
         
@@ -1026,22 +1113,22 @@
                         <table class="matrix-table">
                             <thead>
                                 <tr>
-                                    <th rowspan="2" style="padding:0; position:sticky; left:0; z-index:3; background-color:#e9ecef;">
+                                    <th rowspan="2">
                                         <div style="width: 80px; text-align: center; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">날짜</div>
                                     </th>`;
             
             data.classes.forEach(cName => {
-                html += `<th colspan="2" style="padding:0;">
+                html += `<th colspan="2">
                              <div style="width: 190px; padding: 8px 0; margin: 0 auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 12px; box-sizing: border-box;">${cName}</div>
                          </th>`;
             });
             html += `</tr><tr>`;
             
             data.classes.forEach(cName => {
-                html += `<th style="padding:0;">
+                html += `<th>
                              <div style="width: 95px; padding: 6px 0; margin: 0 auto; font-size: 11px; box-sizing: border-box;">수업개요</div>
                          </th>
-                         <th style="padding:0;">
+                         <th>
                              <div style="width: 95px; padding: 6px 0; margin: 0 auto; font-size: 11px; box-sizing: border-box;">발송완료</div>
                          </th>`;
             });
@@ -1059,7 +1146,7 @@
                 let cellBgColor = row.isOutOfBounds ? '#f4f5f7' : '#fff';
                 
                 html += `<tr style="${bgStyle}">
-                            <td style="font-weight:bold; position:sticky; left:0; background-color:${cellBgColor}; z-index:1;">${dateDisplay}</td>`;
+                            <td style="font-weight:bold; background-color:${cellBgColor};">${dateDisplay}</td>`;
                             
                 data.classes.forEach(cName => {
                     let cellData = row.classes[cName];
@@ -1068,10 +1155,23 @@
                     } else if (cellData.isHolidayEmpty) {
                         html += `<td colspan="2" style="color:#dc3545; font-weight:bold; font-size:11px; background-color:#fff0f0;">${cellData.holidayName}</td>`;
                     } else {
-                        let subjStyle = (!cellData.subjComplete && cellData.activeCount > 0) ? 'color:#dc3545; font-weight:bold;' : 'color:#333;';
-                        let sentStyle = (!cellData.sentComplete && cellData.activeCount > 0) ? 'color:#dc3545; font-weight:bold;' : 'color:#333;';
-                        html += `<td style="${subjStyle}">${cellData.subject}</td>
-                                 <td style="${sentStyle}">${cellData.sent}</td>`;
+                        let subjStyle = 'color:#333;';
+                        if (cellData.activeCount > 0 && !cellData.subjComplete) {
+                            subjStyle = 'color:#dc3545; font-weight:bold;';
+                        }
+                        
+                        let sentStyle = 'color:#333;';
+                        if (!cellData.sentComplete && cellData.activeCount > 0) {
+                            let curSentCount = parseInt(cellData.sent.split('/')[0], 10);
+                            if (curSentCount === 0) sentStyle = 'color:#dc3545; font-weight:bold;';
+                            else sentStyle = 'color:#28a745; font-weight:bold;';
+                        }
+
+                        let tdClickStyle = "cursor:pointer; user-select:none;";
+                        let onDblClick = `ondblclick="openTeacherAppForCell('${data.teacherName}', '${cName}', '${row.date}')"`;
+
+                        html += `<td style="${subjStyle} ${tdClickStyle}" ${onDblClick} title="더블클릭하여 해당 명단 열기">${cellData.subject}</td>
+                                 <td style="${sentStyle} ${tdClickStyle}" ${onDblClick} title="더블클릭하여 해당 명단 열기">${cellData.sent}</td>`;
                     }
                 });
                 html += `</tr>`;
@@ -1095,16 +1195,7 @@
       showLoading(true, "해당 학생의 학기 기록을 불러오는 중입니다...");
       document.getElementById("historyTitle").innerHTML = `<b>${studentName}</b> 학생 기록 <span style="font-size:13px; color:#666; font-weight:normal;">(${className})</span>`;
       
-      google.script.run
-        .withSuccessHandler(function(historyData) {
-          showLoading(false);
-          renderHistoryPopup(historyData);
-        })
-        .withFailureHandler(function(err) {
-          showLoading(false);
-          showCustomAlert("· Error: 기록을 불러오지 못했습니다.<br>(" + err.message.replace(/^Error:\s*/, '').trim() + ")");
-        })
-        .getStudentHistory(teacher, className, studentName, dateVal);
+      createGoogleScriptMock().getStudentHistory(teacher, className, studentName, dateVal);
     }
 
     function renderHistoryPopup(data) {
@@ -1542,7 +1633,7 @@
                     }
                 }
 
-                if (headerRowIdx === -1) throw new Error("엑셀 데이터에서 머릿글(반명, 학생명 등)을 찾을 수 정렬렬습니다.<br>파일 형식을 확인해 주세요.");
+                if (headerRowIdx === -1) throw new Error("엑셀 데이터에서 머릿글(반명, 학생명 등)을 찾을 수 없습니다.<br>파일 형식을 확인해 주세요.");
 
                 let headers = jsonArr[headerRowIdx];
                 for (let c = 0; c < headers.length; c++) {
@@ -1598,27 +1689,26 @@
                     
                     showLoading(true, "명단을 생성중입니다...<br>화면을 닫지 마세요.");
                     
-                    google.script.run
-                        .withSuccessHandler(function(res) {
-                            showLoading(false);
-                            closeUploadModal();
-                            let dParts = sDate.split('-');
-                            let sheetName = `${dParts[0]}.${dParts[1]}-${tName}`;
-                            showCustomAlert(`✔ <b>명단 업로드 성공!</b><br>[${sheetName}] 명단이 시스템에 적용되었습니다.<br>새로고침(F5) 후 사용해 주세요.`, function() {
-                               window.location.reload(); 
-                            });
-                        })
-                        .withFailureHandler(function(err) {
-                            showLoading(false);
-                            document.getElementById('fileInput').value = '';
-                            showCustomAlert("· Error: " + err.message.replace(/^Error:\s*/, '').trim());
-                        })
-                        .uploadNewTerm({
-                            termName: tName,
-                            startDate: sDate,
-                            endDate: eDate,
-                            students: parsedStudents
+                    createGoogleScriptMock().withSuccessHandler(function(res) {
+                        showLoading(false);
+                        closeUploadModal();
+                        let dParts = sDate.split('-');
+                        let sheetName = `${dParts[0]}.${dParts[1]}-${tName}`;
+                        showCustomAlert(`✔ <b>명단 업로드 성공!</b><br>[${sheetName}] 명단이 시스템에 적용되었습니다.<br>새로고침(F5) 후 사용해 주세요.`, function() {
+                           window.location.reload(); 
                         });
+                    })
+                    .withFailureHandler(function(err) {
+                        showLoading(false);
+                        document.getElementById('fileInput').value = '';
+                        showCustomAlert("· Error: " + err.message.replace(/^Error:\s*/, '').trim());
+                    })
+                    .uploadNewTerm({
+                        termName: tName,
+                        startDate: sDate,
+                        endDate: eDate,
+                        students: parsedStudents
+                    });
 
                 }, function() {
                     document.getElementById('fileInput').value = '';
@@ -1632,6 +1722,18 @@
         };
         reader.readAsArrayBuffer(file);
     }
+
+    /* 🟢 스크롤 감지 리스너 추가 (200px 이상 도달 시 클래스 부여하여 노출 제어) */
+    window.addEventListener('scroll', function() {
+      const topBtn = document.getElementById('scrollTopBtn');
+      if (topBtn) {
+        if (window.scrollY > 200) {
+          topBtn.classList.add('show');
+        } else {
+          topBtn.classList.remove('show');
+        }
+      }
+    });
 
     window.addEventListener('keydown', function(e) {
       const modal = document.getElementById('customModalOverlay');
