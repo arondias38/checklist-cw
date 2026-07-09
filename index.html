@@ -283,7 +283,7 @@
     <a id="adminLink" href="#" oncontextmenu="return false;" style="color:#a0bfdc; text-decoration:none; font-size:12px; font-weight:normal; user-select:none; -webkit-user-select:none; cursor:pointer;" onclick="if(checkLockdown(event)) return false; promptAdminCode(event);">⚙️ 관리자</a>
   </div>
 
-  <div style="position: absolute; right: 25px; margin-top: 6px; font-size: 11px; color: #adb5bd; font-family: 'Pretendard', sans-serif; letter-spacing: 0.5px; z-index: 10;">v.26.07.08-01</div>
+  <div style="position: absolute; right: 25px; margin-top: 6px; font-size: 11px; color: #adb5bd; font-family: 'Pretendard', sans-serif; letter-spacing: 0.5px; z-index: 10;">v.26.07.09-01</div>
 
   <div class="app-body">
     <div class="header-bar">
@@ -1305,8 +1305,13 @@
       });
     }
 
+    // 👇 [수정됨] 화면에 표시된 강의실(roomVal) 정보를 가져와서 payload에 담도록 위치 및 코드 반영
     function saveData() {
-      const teacher = document.getElementById("teacherSelect").value; const date = document.getElementById("dateInput").value; const className = document.getElementById("classSelect").value;
+      const teacher = document.getElementById("teacherSelect").value; 
+      const date = document.getElementById("dateInput").value; 
+      const className = document.getElementById("classSelect").value;
+      const roomVal = document.getElementById("dbRoom").textContent;
+      
       if(studentList.length === 0) { showCustomAlert("저장할 데이터가 없습니다."); return; }
       
       const emptyNew = studentList.filter(st => st.isNew && st.name.trim() === "");
@@ -1335,7 +1340,7 @@
             showCustomAlert(`(${fDate})<br><b>${className} 반</b><br>체크리스트가 저장되었습니다.`);
           })
           .withFailureHandler(function(err) { showLoading(false); showCustomAlert("· Error: 서버 저장 중 오류가 발생했습니다.<br>(" + err.message.replace(/^Error:\s*/, '').trim() + ")"); })
-          .commitAttendanceToDatabase({ teacher, date, className, subject: currentSubject, students: studentList });
+          .commitAttendanceToDatabase({ teacher, date, className, room: roomVal, subject: currentSubject, students: studentList });
       }
     }
 
