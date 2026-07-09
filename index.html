@@ -49,19 +49,72 @@
     .matrix-header { font-size: 18px; font-weight: 900; color: #1366ce; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #1366ce; padding-bottom: 10px; }
     .matrix-close-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: #888; }
     .matrix-close-btn:hover { color: #333; }
-    .matrix-content { overflow: auto; flex: 1; }
+    
+    /* 🟢 요약 팝업 스크롤 틈새 및 테두리 소실 방지 완벽 대응 CSS */
+    .matrix-content { overflow: auto; flex: 1; position: relative; }
     .matrix-month-title { font-size: 16px; font-weight: 800; color: #495057; margin: 20px 0 10px 0; border-left: 4px solid #1366ce; padding-left: 8px; text-align: left; }
     
     .matrix-table-wrap { width: max-content; background: transparent; margin-bottom: 15px; padding: 0 15px 0 0; box-sizing: border-box; }
-    .matrix-table { width: max-content; border-collapse: collapse; font-size: 12px; text-align: center; margin: 0; border-top: 1px solid #eaeaea; border-bottom: 1px solid #eaeaea; }
-    .matrix-table th, .matrix-table td { border-top: none; border-left: none; border-bottom: 1px solid #eaeaea; border-right: 1px solid #eaeaea; }
-    .matrix-table th { background-color: #e9ecef; font-weight: bold; padding: 8px 4px; color: #333; position: sticky; top: 0; z-index: 2; border-bottom: 1px solid #ced4da; border-right: 1px solid #ced4da; }
+    .matrix-table { 
+        width: max-content; 
+        border-collapse: separate; 
+        border-spacing: 0; 
+        font-size: 12px; 
+        text-align: center; 
+        margin: 0; 
+        border-top: 1px solid #ced4da; 
+        border-left: none; 
+        border-bottom: none;
+    }
+    .matrix-table th, .matrix-table td { 
+        border-top: none; 
+        border-left: none; 
+        border-bottom: 1px solid #eaeaea; 
+        border-right: 1px solid #eaeaea; 
+        background-clip: padding-box; 
+    }
+    .matrix-table th { 
+        background-color: #e9ecef; 
+        font-weight: bold; 
+        padding: 0; 
+        color: #333; 
+        position: sticky; 
+        border-bottom: 1px solid #ced4da; 
+        border-right: 1px solid #ced4da; 
+    }
     .matrix-table td { padding: 6px 4px; vertical-align: middle; }
-    .matrix-table th:last-child, .matrix-table td:last-child { border-right: none; }
-    .matrix-table tbody tr:last-child td { border-bottom: none; }
+    .matrix-table th:last-child, .matrix-table td:last-child { border-right: none; } 
+    .matrix-table tbody tr:last-child td { border-bottom: 1px solid #eaeaea; } 
+    
+    /* 2단 고정(Sticky) 정밀 픽셀 매칭 */
+    .matrix-table thead tr:nth-child(1) th { top: 0; height: 32px; z-index: 4; box-sizing: border-box; }
+    .matrix-table thead tr:nth-child(2) th { top: 32px; height: 28px; z-index: 3; box-sizing: border-box; }
+    
+    /* 날짜 열 좌측 고정 */
+    .matrix-table thead tr:nth-child(1) th:first-child { left: 0; z-index: 5 !important; }
+    .matrix-table tbody td:first-child { position: sticky; left: 0; z-index: 2; border-right: 1px solid #ced4da; }
 
     .academy-header-bar { margin-top: 15px; background-color: #1366ce; color: #ffffff; padding: 10px 25px; font-size: 18px; font-weight: bold; display: flex; justify-content: center; align-items: center; position: relative; }
     .academy-header-bar a { position: absolute; right: 25px; }
+    
+    /* 🟢 맨 위로 가기 스마트 플로팅 버튼 CSS (스르륵 효과 반영) */
+    .floating-top-btn {
+      position: fixed; bottom: 25px; right: 25px; 
+      height: 36px; width: 36px; border-radius: 18px;
+      background-color: #ffffff; color: #495057; border: 1px solid #ced4da;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.25); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 9999; 
+      opacity: 0; 
+      pointer-events: none; 
+      transition: opacity 0.3s, background-color 0.2s, transform 0.2s; 
+    }
+    .floating-top-btn.show {
+      opacity: 1;
+      pointer-events: auto; 
+    }
+    .floating-top-btn:hover { background-color: #f8f9fa; transform: translateY(-2px); }
+    .floating-top-btn:active { transform: translateY(0); }
     
     .app-body { padding: 20px; }
     
@@ -229,6 +282,15 @@
   </style>
 </head>
 <body>
+
+  <button class="floating-top-btn" id="scrollTopBtn" onclick="window.scrollTo(0, 0);" title="맨 위로 이동">
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#495057" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="5" y1="3" x2="19" y2="3"></line>
+      <polyline points="6 15 12 9 18 15"></polyline>
+      <line x1="12" y1="21" x2="12" y2="9"></line>
+    </svg>
+  </button>
+
   <div class="spinner-overlay" id="globalSpinner"><div class="spinner"></div><div class="spinner-text" id="spinnerText">데이터를 불러오는 중입니다.</div></div>
   
   <div class="modal-overlay" id="customModalOverlay">
@@ -283,7 +345,7 @@
     <a id="adminLink" href="#" oncontextmenu="return false;" style="color:#a0bfdc; text-decoration:none; font-size:12px; font-weight:normal; user-select:none; -webkit-user-select:none; cursor:pointer;" onclick="if(checkLockdown(event)) return false; promptAdminCode(event);">⚙️ 관리자</a>
   </div>
 
-  <div style="position: absolute; right: 25px; margin-top: 6px; font-size: 11px; color: #adb5bd; font-family: 'Pretendard', sans-serif; letter-spacing: 0.5px; z-index: 10;">v.26.07.09-01</div>
+  <div style="position: absolute; right: 25px; margin-top: 6px; font-size: 11px; color: #adb5bd; font-family: 'Pretendard', sans-serif; letter-spacing: 0.5px; z-index: 10;">v.26.07.10-01</div>
 
   <div class="app-body">
     <div class="header-bar">
@@ -396,11 +458,11 @@
 
   <script>
     window.loadedState = null;
+    window.autoLoadParams = null; 
 
     const CAMPUS_URLS = {
       "yeongtong": "https://script.google.com/macros/s/AKfycbxuvxrHEHKtL33Wweh8AoNxFwrl_mmVogZN0l9gjB6GwV1nUGI5HnNLJOQ_Tt7rY7yi/exec",
-      "dongtan": "https://script.google.com/macros/s/AKfycbzRcme0LEJ5O3PEqjekUkGSA-zBl_a1Kgb1aLR85A9DBIOA8G-u8uGWAMbx1ThLLw4ITQ/exec",
-      "yeongcheon": "https://script.google.com/macros/s/AKfycbxw9tIiVEb95yEtsCc7Zo1HkoYRAZHCi9KyUdhkXDABU_on2zK659EkjMdrlhIh_ZvC/exec"
+      "dongtan": "https://script.google.com/macros/s/AKfycbzRcme0LEJ5O3PEqjekUkGSA-zBl_a1Kgb1aLR85A9DBIOA8G-u8uGWAMbx1ThLLw4ITQ/exec"
     };
 
     function createGoogleScriptMock() {
@@ -518,6 +580,13 @@
       const urlParams = new URLSearchParams(window.location.search);
       const campus = urlParams.get('campus');
       if (campus) {
+         const tParam = urlParams.get('teacher');
+         const cParam = urlParams.get('class');
+         const dParam = urlParams.get('date');
+         if (tParam || cParam || dParam) {
+             window.autoLoadParams = { teacher: tParam, className: cParam, date: dParam };
+         }
+         
          document.getElementById("campusSelect").value = campus;
          onCampusChange();
       } else {
@@ -563,6 +632,19 @@
             const select = document.getElementById("teacherSelect");
             data.teachers.forEach(t => { let opt = document.createElement("option"); opt.value = t; opt.textContent = t; select.appendChild(opt); });
             select.disabled = false;
+
+            if (window.autoLoadParams && window.autoLoadParams.teacher) {
+                let options = Array.from(select.options).map(o => o.value);
+                if (options.includes(window.autoLoadParams.teacher)) {
+                    select.value = window.autoLoadParams.teacher;
+                    select.dataset.prev = window.autoLoadParams.teacher;
+                    window.autoLoadParams.teacher = null; 
+                    onTeacherChange();
+                } else {
+                    window.autoLoadParams = null; 
+                }
+            }
+
         }).withFailureHandler(function(err) {
             showLoading(false);
             showCustomAlert("· Error: 데이터를 불러오지 못했습니다.<br>(" + err.message.replace(/^Error:\s*/, '').trim() + ")");
@@ -667,6 +749,19 @@
            classSelect.appendChild(opt); 
         });
         classSelect.disabled = false;
+
+        if (window.autoLoadParams && window.autoLoadParams.className) {
+            let options = Array.from(classSelect.options).map(o => o.value);
+            if (options.includes(window.autoLoadParams.className)) {
+                classSelect.value = window.autoLoadParams.className;
+                let cName = window.autoLoadParams.className;
+                window.autoLoadParams.className = null;
+                finalizeClassChange(cName);
+            } else {
+                window.autoLoadParams = null;
+            }
+        }
+
       }).getClassesForTeacher(teacher); 
     }
 
@@ -708,12 +803,22 @@
     function finalizeClassChange(val) {
         const classSelect = document.getElementById("classSelect");
         classSelect.dataset.prev = val;
-        if(classMetaSchedule[val].status !== "current") {
+        if(classMetaSchedule[val] && classMetaSchedule[val].status !== "current") {
             classSelect.style.color = "#b0b0b0"; 
         } else {
             classSelect.style.color = "#333";
         }
-        onClassSelectAutoTrigger();
+        
+        if (window.autoLoadParams && window.autoLoadParams.date) {
+            onClassChange();
+            let dateInput = document.getElementById("dateInput");
+            dateInput.value = window.autoLoadParams.date;
+            dateInput.dataset.prev = window.autoLoadParams.date;
+            window.autoLoadParams.date = null;
+            onDateInputChange();
+        } else {
+            onClassSelectAutoTrigger();
+        }
     }
 
     function onClassChange() {
@@ -1043,7 +1148,6 @@
              }
           };
 
-          // 🟢 [NEW] 한글(HWP) 및 엑셀 스마트 다중 붙여넣기 + 메모장 단일 셀 복사 지원 로직
           input.onpaste = function(e) {
              e.preventDefault();
              let clipboardData = (e.clipboardData || window.clipboardData);
@@ -1059,16 +1163,12 @@
              let hasHtmlTable = htmlData && /<table/i.test(htmlData);
              
              let useHtmlParser = !hasTabs && hasHtmlTable;
-             
-             // 🟢 [추가] 탭(\t)이 없고, HTML 표 구조가 없는 경우 = 메모장/일반 텍스트 에디터 복사
              let isPureText = !hasTabs && !hasHtmlTable;
 
              if (isPureText) {
-                 // 메모장에서 복사한 줄바꿈 텍스트는 행(Row)을 나누지 않고 하나의 셀 데이터로 묶음
                  rows = [[pasteText.replace(/\r\n/g, '\n').replace(/\r/g, '\n').replace(/\n$/, '')]];
              }
              else if (useHtmlParser) {
-                 // 한글(HWP) 표나 웹 표 복사 시
                  try {
                      let tempDiv = document.createElement('div');
                      let safeHtml = htmlData.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
@@ -1107,7 +1207,6 @@
                  }
              }
 
-             // HTML 파싱을 안 했거나 에러가 났다면 기존 엑셀 파서 실행
              if (rows.length === 0 && pasteText && !isPureText) {
                  let currentRow = [];
                  let currentCell = "";
@@ -1158,7 +1257,6 @@
                  }
              }
 
-             // 화면(input)에 매핑 로직
              let startRow = parseInt(this.dataset.row);
              let startCol = parseInt(this.dataset.col);
 
@@ -1180,8 +1278,6 @@
                      let field = colFieldMap[targetColIdx];
                      let val = cols[j];
 
-                     // 💡 [추천 개선사항 적용] 특이사항(note)이 아닌 일반 입력칸(과제, 이름 등)에
-                     // 줄바꿈이 있는 텍스트가 들어갈 경우, 화면 및 데이터 깨짐 방지를 위해 스페이스(공백)로 치환합니다.
                      if (targetColIdx !== 7 && val.includes('\n')) {
                          val = val.replace(/\n/g, ' ').trim();
                      }
@@ -1304,7 +1400,6 @@
       });
     }
 
-    // 👇 [수정됨] 화면에 표시된 강의실(roomVal) 정보를 가져와서 payload에 담도록 위치 및 코드 반영
     function saveData() {
       const teacher = document.getElementById("teacherSelect").value; 
       const date = document.getElementById("dateInput").value; 
@@ -1343,6 +1438,12 @@
       }
     }
 
+    function openTeacherAppForCell(teacher, className, dateStr) {
+        const campus = document.getElementById("campusSelect").value;
+        let url = `index.html?campus=${encodeURIComponent(campus)}&teacher=${encodeURIComponent(teacher)}&class=${encodeURIComponent(className)}&date=${encodeURIComponent(dateStr)}`;
+        window.open(url, '_blank');
+    }
+
     function openTeacherMatrixPopup(teacherName) {
         const dateVal = document.getElementById("dateInput").value;
         if (!dateVal) { showCustomAlert("조회할 날짜를 먼저 선택해 주세요."); return; }
@@ -1369,10 +1470,19 @@
             let subjPct = data.summary.subjExpected > 0 ? Math.min(100, Math.round((data.summary.subjDone / data.summary.subjExpected) * 100)) : 0;
             let sentPct = data.summary.sentExpected > 0 ? Math.min(100, Math.round((data.summary.sentDone / data.summary.sentExpected) * 100)) : 100;
             
-            let subjStyle = subjPct < 100 ? "color:#dc3545; font-weight:bold;" : "color:inherit;";
-            let sentStyle = sentPct < 100 ? "color:#dc3545; font-weight:bold;" : "color:inherit;";
+            let subjStyle = "color:inherit;";
+            if (data.summary.subjExpected > 0) {
+                if (data.summary.subjDone === 0) subjStyle = "color:#dc3545; font-weight:bold;";
+                else if (data.summary.subjDone < data.summary.subjExpected) subjStyle = "color:#28a745; font-weight:bold;";
+            }
             
-            sumHtml = ` <span style="font-size:14px; font-weight:normal;">( 이번 학기 수업개요입력 <span style="${subjStyle}">${subjPct}%</span> &nbsp;|&nbsp; 발송완료체크 <span style="${sentStyle}">${sentPct}%</span> )</span>`;
+            let sentStyleTop = "color:inherit;"; 
+            if (data.summary.sentExpected > 0) {
+                if (data.summary.sentDone === 0) sentStyleTop = "color:#dc3545; font-weight:bold;"; 
+                else if (data.summary.sentDone < data.summary.sentExpected) sentStyleTop = "color:#28a745; font-weight:bold;"; 
+            }
+            
+            sumHtml = ` <span style="font-size:14px; font-weight:normal;">( 이번 학기 수업개요입력 <span style="${subjStyle}">${subjPct}%</span> &nbsp;|&nbsp; 발송완료체크 <span style="${sentStyleTop}">${sentPct}%</span> )</span>`;
         }
         document.getElementById("matrixTitle").innerHTML = `<b>${data.teacherName}</b> 선생님 학기 요약${sumHtml}`;
         
@@ -1392,22 +1502,22 @@
                         <table class="matrix-table">
                             <thead>
                                 <tr>
-                                    <th rowspan="2" style="padding:0; position:sticky; left:0; z-index:3; background-color:#e9ecef;">
+                                    <th rowspan="2">
                                         <div style="width: 80px; text-align: center; height: 100%; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">날짜</div>
                                     </th>`;
             
             data.classes.forEach(cName => {
-                html += `<th colspan="2" style="padding:0;">
+                html += `<th colspan="2">
                              <div style="width: 190px; padding: 8px 0; margin: 0 auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 12px; box-sizing: border-box;">${cName}</div>
                          </th>`;
             });
             html += `</tr><tr>`;
             
             data.classes.forEach(cName => {
-                html += `<th style="padding:0;">
+                html += `<th>
                              <div style="width: 95px; padding: 6px 0; margin: 0 auto; font-size: 11px; box-sizing: border-box;">수업개요</div>
                          </th>
-                         <th style="padding:0;">
+                         <th>
                              <div style="width: 95px; padding: 6px 0; margin: 0 auto; font-size: 11px; box-sizing: border-box;">발송완료</div>
                          </th>`;
             });
@@ -1425,7 +1535,7 @@
                 let cellBgColor = row.isOutOfBounds ? '#f4f5f7' : '#fff';
                 
                 html += `<tr style="${bgStyle}">
-                            <td style="font-weight:bold; position:sticky; left:0; background-color:${cellBgColor}; z-index:1;">${dateDisplay}</td>`;
+                            <td style="font-weight:bold; background-color:${cellBgColor};">${dateDisplay}</td>`;
                             
                 data.classes.forEach(cName => {
                     let cellData = row.classes[cName];
@@ -1434,10 +1544,23 @@
                     } else if (cellData.isHolidayEmpty) {
                         html += `<td colspan="2" style="color:#dc3545; font-weight:bold; font-size:11px; background-color:#fff0f0;">${cellData.holidayName}</td>`;
                     } else {
-                        let subjStyle = (!cellData.subjComplete && cellData.activeCount > 0) ? 'color:#dc3545; font-weight:bold;' : 'color:#333;';
-                        let sentStyle = (!cellData.sentComplete && cellData.activeCount > 0) ? 'color:#dc3545; font-weight:bold;' : 'color:#333;';
-                        html += `<td style="${subjStyle}">${cellData.subject}</td>
-                                 <td style="${sentStyle}">${cellData.sent}</td>`;
+                        let subjStyle = 'color:#333;';
+                        if (cellData.activeCount > 0 && !cellData.subjComplete) {
+                            subjStyle = 'color:#dc3545; font-weight:bold;';
+                        }
+                        
+                        let sentStyle = 'color:#333;';
+                        if (!cellData.sentComplete && cellData.activeCount > 0) {
+                            let curSentCount = parseInt(cellData.sent.split('/')[0], 10);
+                            if (curSentCount === 0) sentStyle = 'color:#dc3545; font-weight:bold;';
+                            else sentStyle = 'color:#28a745; font-weight:bold;';
+                        }
+
+                        let tdClickStyle = "cursor:pointer; user-select:none;";
+                        let onDblClick = `ondblclick="openTeacherAppForCell('${data.teacherName}', '${cName}', '${row.date}')"`;
+                        
+                        html += `<td style="${subjStyle} ${tdClickStyle}" ${onDblClick} title="더블클릭하여 해당 명단 열기">${cellData.subject}</td>
+                                 <td style="${sentStyle} ${tdClickStyle}" ${onDblClick} title="더블클릭하여 해당 명단 열기">${cellData.sent}</td>`;
                     }
                 });
                 html += `</tr>`;
@@ -1503,6 +1626,18 @@
     function closeHistoryPopup() {
       document.getElementById("historyOverlay").style.display = "none";
     }
+
+    /* 🟢 스크롤 감지 리스너 추가 (200px 이상 도달 시 클래스 부여하여 노출 제어) */
+    window.addEventListener('scroll', function() {
+      const topBtn = document.getElementById('scrollTopBtn');
+      if (topBtn) {
+        if (window.scrollY > 200) {
+          topBtn.classList.add('show');
+        } else {
+          topBtn.classList.remove('show');
+        }
+      }
+    });
 
     window.addEventListener('keydown', function(e) {
       const modal = document.getElementById('customModalOverlay');
