@@ -474,7 +474,7 @@
     <a id="teacherLink" href="#" style="color:#ffffff; text-decoration:none; font-size:14px;" onclick="handleTeacherLinkClick(event)">⬅️ 선생님 모드로 돌아가기</a>
   </div>
 
-  <div style="position: absolute; right: 25px; margin-top: 6px; font-size: 11px; color: #adb5bd; font-family: 'Pretendard', sans-serif; letter-spacing: 0.5px; z-index: 10;">v.26.07.10-02</div>
+  <div style="position: absolute; right: 25px; margin-top: 6px; font-size: 11px; color: #adb5bd; font-family: 'Pretendard', sans-serif; letter-spacing: 0.5px; z-index: 10;">v.26.07.10-01</div>
 
   <div class="app-body">
     <div class="header-bar">
@@ -1121,7 +1121,6 @@
         
         let html = "";
         data.months.forEach(monthObj => {
-            /* 🟢 가로/세로 스크롤 동시 고정을 위한 구획화 섹션 및 이중 Sticky 마크업 반영 */
             html += `<div class="matrix-month-section">`;
             html += `<div class="matrix-month-title-bg"><div class="matrix-month-title">${monthObj.month}</div></div>`;
             html += `<div class="matrix-table-wrap">
@@ -1210,7 +1209,16 @@
       showLoading(true, "해당 학생의 학기 기록을 불러오는 중입니다...");
       document.getElementById("historyTitle").innerHTML = `<b>${studentName}</b> 학생 기록 <span style="font-size:13px; color:#666; font-weight:normal;">(${className})</span>`;
       
-      createGoogleScriptMock().getStudentHistory(teacher, className, studentName, dateVal);
+      google.script.run
+        .withSuccessHandler(function(historyData) {
+          showLoading(false);
+          renderHistoryPopup(historyData);
+        })
+        .withFailureHandler(function(err) {
+          showLoading(false);
+          showCustomAlert("· Error: 기록을 불러오지 못했습니다.<br>(" + err.message.replace(/^Error:\s*/, '').trim() + ")");
+        })
+        .getStudentHistory(teacher, className, studentName, dateVal);
     }
 
     function renderHistoryPopup(data) {
