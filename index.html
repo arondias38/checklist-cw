@@ -37,7 +37,9 @@
     .history-close-btn { background: none; border: none; font-size: 20px; cursor: pointer; color: #888; }
     .history-close-btn:hover { color: #333; }
     .history-content { overflow-y: auto; flex: 1; border-top: 1px solid #eaeaea; border-bottom: 1px solid #eaeaea; }
-    .history-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 0; }
+    
+    /* 🟢 폰트 1px 증가 적용 */
+    .history-table { width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 0; }
     .history-table th { background-color: #f8f9fa; font-weight: bold; padding: 10px 8px; text-align: center; border-bottom: 1px solid #eaeaea; border-right: 1px solid #eaeaea; color: #333; position: sticky; top: 0; z-index: 2; border-top: none; border-left: none; }
     .history-table td { padding: 8px; text-align: center; border-bottom: 1px solid #eaeaea; border-right: 1px solid #eaeaea; vertical-align: middle; border-top: none; border-left: none; }
     .history-table th:last-child, .history-table td:last-child { border-right: none; }
@@ -50,7 +52,6 @@
     .matrix-close-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: #888; }
     .matrix-close-btn:hover { color: #333; }
     
-    /* 🟢 가로 스크롤 시 표 투과 방지를 위한 구획 및 이중 Sticky 타이틀 고정 */
     .matrix-content { overflow: auto; flex: 1; position: relative; }
     
     .matrix-month-section { position: relative; margin-bottom: 15px; width: max-content; min-width: 100%; }
@@ -67,11 +68,13 @@
     }
     
     .matrix-table-wrap { width: max-content; background: transparent; margin-bottom: 15px; padding: 0 15px 0 0; box-sizing: border-box; }
+    
+    /* 🟢 폰트 1px 증가 적용 */
     .matrix-table { 
         width: max-content; 
         border-collapse: separate; 
         border-spacing: 0; 
-        font-size: 12px; 
+        font-size: 13px; 
         text-align: center; 
         margin: 0; 
         border-top: 1px solid #ced4da; 
@@ -98,7 +101,6 @@
     .matrix-table th:last-child, .matrix-table td:last-child { border-right: none; } 
     .matrix-table tbody tr:last-child td { border-bottom: 1px solid #eaeaea; } 
     
-    /* 🟢 상단 년월 타이틀 최소 높이(32px)만큼 Sticky 시작 위치 정밀 조정 */
     .matrix-table thead tr:nth-child(1) th { top: 32px; height: 32px; z-index: 4; box-sizing: border-box; }
     .matrix-table thead tr:nth-child(2) th { top: 64px; height: 28px; z-index: 3; box-sizing: border-box; }
     
@@ -164,7 +166,9 @@
     .empty-state { flex: 1; display: flex; justify-content: center; align-items: center; color: #888; border: 2px dashed #dee2e6; border-radius: 6px; text-align: center; line-height: 1.5; min-height: 300px; font-weight: bold; }
     
     .table-fixed-wrapper { width: 100%; overflow-y: auto; overflow-x: hidden; max-height: 825px; border-top: 1px solid #dee2e6; border-left: 1px solid #dee2e6; border-radius: 4px; background-color: #fff; }
-    table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 12.5px; table-layout: fixed; margin-top: 0; }
+    
+    /* 🟢 폰트 1px 증가 적용 */
+    table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 13.5px; table-layout: fixed; margin-top: 0; }
     
     th, td { border-bottom: 1px solid #dee2e6; border-right: 1px solid #dee2e6; padding: 4px; text-align: center; vertical-align: middle; box-sizing: border-box; }
     
@@ -174,12 +178,14 @@
     thead tr:nth-child(1) th { position: sticky; top: 0; z-index: 12; }
     thead tr:nth-child(2) th { position: sticky; top: 32px; z-index: 11; }
     
-    .input-mini { width: 100%; padding: 4px; border: 1px solid #ccc; border-radius: 3px; text-align: center; box-sizing: border-box; font-family: 'Pretendard', sans-serif; font-weight: normal; color: #333; background-color: transparent;}
+    /* 🟢 폰트 1px 증가 적용 */
+    .input-mini { width: 100%; padding: 4px; border: 1px solid #ccc; border-radius: 3px; text-align: center; box-sizing: border-box; font-family: 'Pretendard', sans-serif; font-size: 13.5px; font-weight: normal; color: #333; background-color: transparent;}
     .input-mini.empty-placeholder { color: #888888 !important; font-weight: normal; }
     
+    /* 🟢 폰트 1px 증가 적용 */
     .note-textarea { 
       width: 100%; padding: 4px 6px; border: 1px solid #ccc; border-radius: 3px; box-sizing: border-box; 
-      font-family: 'Pretendard', sans-serif; 
+      font-family: 'Pretendard', sans-serif; font-size: 13.5px; 
       resize: none; 
       height: 28px; 
       min-height: 28px; 
@@ -219,20 +225,24 @@
     .subject-box { margin-bottom: 12px; background-color: #fdfdfd; padding: 12px; border: 1px solid #e9ecef; border-radius: 6px; }
     .subject-label { font-size: 14px; font-weight: bold; color: #1366ce; margin-bottom: 6px; display: block; }
     
-    .subject-input { width: 100%; padding: 8px; border: 1px solid #ced4da; border-radius: 4px; box-sizing: border-box; resize: vertical; height: 75px; font-family: 'Pretendard', sans-serif; font-size: 14px; font-weight: normal; color: #333; }
-    .subject-input::placeholder { color: #b0b0b0; font-weight: normal; font-size: 14px; }
+    /* 🟢 폰트 1px 증가 적용 */
+    .subject-input { width: 100%; padding: 8px; border: 1px solid #ced4da; border-radius: 4px; box-sizing: border-box; resize: vertical; height: 75px; font-family: 'Pretendard', sans-serif; font-size: 15px; font-weight: normal; color: #333; }
+    .subject-input::placeholder { color: #b0b0b0; font-weight: normal; font-size: 15px; }
 
     .copy-panel-title { text-align: center; font-weight: 800; font-size: 16px; color: #1366ce; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 2px solid #e6f0ff; letter-spacing: 0.5px; }
     .note-container { margin-bottom: 8px; font-size: 14px; color: #333; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
-    textarea#customNote { width: 100%; height: 75px; margin-bottom: 12px; font-family: 'Pretendard', sans-serif; font-size: 14px; padding: 6px; border: 1px solid #bbb; border-radius: 4px; resize: vertical; outline: none; box-sizing: border-box;}
-    textarea#customNote::placeholder { color: #b0b0b0; font-weight: normal; font-size: 14px; }
+    
+    /* 🟢 폰트 1px 증가 적용 */
+    textarea#customNote { width: 100%; height: 75px; margin-bottom: 12px; font-family: 'Pretendard', sans-serif; font-size: 15px; padding: 6px; border: 1px solid #bbb; border-radius: 4px; resize: vertical; outline: none; box-sizing: border-box;}
+    textarea#customNote::placeholder { color: #b0b0b0; font-weight: normal; font-size: 15px; }
     
     .copy-all-container { text-align: right; margin: 0px 0px 10px 0; }
     
+    /* 🟢 폰트 1px 증가 적용 */
     .preview-area { flex: 1; overflow-y: auto; padding-right: 5px; }
-    .card { border: 1px solid #ccc; border-radius: 4px; padding: 8px 12px 6px 12px; margin-bottom: 8px; background-color: #f9f9f9; box-shadow: 0 1px 2px rgba(0,0,0,0.05); line-height: 1.4; white-space: pre-wrap; word-break: break-all; transition: background-color 0.3s ease; text-align: left; font-size: 14px; }
+    .card { border: 1px solid #ccc; border-radius: 4px; padding: 8px 12px 6px 12px; margin-bottom: 8px; background-color: #f9f9f9; box-shadow: 0 1px 2px rgba(0,0,0,0.05); line-height: 1.4; white-space: pre-wrap; word-break: break-all; transition: background-color 0.3s ease; text-align: left; font-size: 15px; }
     .card-header-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; padding-bottom: 4px; border-bottom: 1px solid #eaeaea; }
-    .card-header { font-size: 15px; font-weight: 800; color: #1366ce; margin: 0; }
+    .card-header { font-size: 16px; font-weight: 800; color: #1366ce; margin: 0; }
     .copy-btn, .copy-all-btn { font-size: 13px; padding: 4px 10px; cursor: pointer; background-color: white; color: #1366ce; border: 1px solid #1366ce; border-radius: 50px; margin: 0; font-weight: bold; }
 
     .left-panel, .main-container { position: relative; } 
@@ -355,7 +365,7 @@
     <a id="adminLink" href="#" oncontextmenu="return false;" style="color:#a0bfdc; text-decoration:none; font-size:12px; font-weight:normal; user-select:none; -webkit-user-select:none; cursor:pointer;" onclick="if(checkLockdown(event)) return false; promptAdminCode(event);">⚙️ 관리자</a>
   </div>
 
-  <div style="position: absolute; right: 25px; margin-top: 6px; font-size: 11px; color: #adb5bd; font-family: 'Pretendard', sans-serif; letter-spacing: 0.5px; z-index: 10;">v.26.07.10-03</div>
+  <div style="position: absolute; right: 25px; margin-top: 6px; font-size: 11px; color: #adb5bd; font-family: 'Pretendard', sans-serif; letter-spacing: 0.5px; z-index: 10;">v.26.07.10-04</div>
 
   <div class="app-body">
     <div class="header-bar">
@@ -424,7 +434,7 @@
                   <th rowspan="2" width="6%">주간<br>테스트</th>
                   <th rowspan="2" width="39%">학생별 특이사항 / 보강계획<br><span style="color:#888; font-size:11px; font-weight:normal;">( 줄바꿈: Shift + Enter )</span></th>
                   <th rowspan="2" width="6.5%">발송완료<br><input type="checkbox" class="master-checkbox" id="masterSend" onchange="toggleMaster('sendCheck', this.checked)" tabindex="-1"></th>
-                  <th rowspan="2" width="6.5%">관리자 확인<br><input type="checkbox" class="master-checkbox" id="masterLead" disabled title="관리자 전용" tabindex="-1"></th>
+                  <th rowspan="2" width="6.5%">관리자<br>확인</th>
                 </tr>
                 <tr>
                   <th width="6%">과제</th>
@@ -790,7 +800,7 @@
                     else { el.style.color = ""; }
                 });
             } else if (status === "future") {
-                showCustomConfirm("예정 학기의 반입니다. 계속 진행할까요?", function() {
+                showCustomConfirm("예정 학기의 반입니다. 대기 학기의 반입니다. 계속 진행할까요?", function() {
                     finalizeClassChange(attemptVal);
                 }, function() {
                     el.value = prevVal; 
@@ -1265,7 +1275,7 @@
                  if (rows.length > 0 && rows[rows.length - 1].length === 1 && rows[rows.length - 1][0] === "") {
                      rows.pop();
                  }
-             }
+              }
 
              let startRow = parseInt(this.dataset.row);
              let startCol = parseInt(this.dataset.col);
@@ -1450,7 +1460,7 @@
 
     function openTeacherAppForCell(teacher, className, dateStr) {
         const campus = document.getElementById("campusSelect").value;
-        let url = `index.html?campus=${encodeURIComponent(campus)}&teacher=${encodeURIComponent(teacher)}&class=${encodeURIComponent(className)}&date=${encodeURIComponent(dateStr)}`;
+        let url = `index.html?campus=${encodeURIComponent(campus)}&teacher=${encodeURIComponent(className)}&class=${encodeURIComponent(className)}&date=${encodeURIComponent(dateStr)}`;
         window.open(url, '_blank');
     }
 
@@ -1507,7 +1517,6 @@
         
         let html = "";
         data.months.forEach(monthObj => {
-            /* 🟢 가로/세로 스크롤 동시 고정을 위한 구획화 섹션 및 이중 Sticky 마크업 반영 */
             html += `<div class="matrix-month-section">`;
             html += `<div class="matrix-month-title-bg"><div class="matrix-month-title">${monthObj.month}</div></div>`;
             html += `<div class="matrix-table-wrap">
@@ -1520,17 +1529,17 @@
             
             data.classes.forEach(cName => {
                 html += `<th colspan="2">
-                             <div style="width: 150px; padding: 8px 0; margin: 0 auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 12px; box-sizing: border-box;">${cName}</div>
+                             <div style="width: 150px; padding: 8px 0; margin: 0 auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 13px; box-sizing: border-box;">${cName}</div>
                          </th>`;
             });
             html += `</tr><tr>`;
             
             data.classes.forEach(cName => {
                 html += `<th>
-                             <div style="width: 75px; padding: 6px 0; margin: 0 auto; font-size: 11px; box-sizing: border-box;">수업개요</div>
+                             <div style="width: 75px; padding: 6px 0; margin: 0 auto; font-size: 12px; box-sizing: border-box;">수업개요</div>
                          </th>
                          <th>
-                             <div style="width: 75px; padding: 6px 0; margin: 0 auto; font-size: 11px; box-sizing: border-box;">발송완료</div>
+                             <div style="width: 75px; padding: 6px 0; margin: 0 auto; font-size: 12px; box-sizing: border-box;">발송완료</div>
                          </th>`;
             });
             html += `</tr></thead><tbody>`;
@@ -1554,7 +1563,7 @@
                     if (!cellData.isActive) {
                         html += `<td style="background-color:#f8f9fa;"></td><td style="background-color:#f8f9fa;"></td>`;
                     } else if (cellData.isHolidayEmpty) {
-                        html += `<td colspan="2" style="color:#dc3545; font-weight:bold; font-size:11px; background-color:#fff0f0;">${cellData.holidayName}</td>`;
+                        html += `<td colspan="2" style="color:#dc3545; font-weight:bold; font-size:12px; background-color:#fff0f0;">${cellData.holidayName}</td>`;
                     } else {
                         let subjStyle = 'color:#333;';
                         if (cellData.activeCount > 0 && !cellData.subjComplete) {
