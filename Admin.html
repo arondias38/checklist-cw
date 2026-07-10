@@ -63,8 +63,21 @@
     .matrix-close-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: #888; }
     .matrix-close-btn:hover { color: #333; }
     
+    /* 🟢 가로 스크롤 시 표 투과 방지를 위한 구획 및 이중 Sticky 타이틀 고정 (Admin 테마 반영) */
     .matrix-content { overflow: auto; flex: 1; position: relative; }
-    .matrix-month-title { font-size: 16px; font-weight: 800; color: #495057; margin: 20px 0 10px 0; border-left: 4px solid #d32f2f; padding-left: 8px; }
+    
+    .matrix-month-section { position: relative; margin-bottom: 15px; width: max-content; min-width: 100%; }
+    .matrix-month-title-bg { 
+        position: sticky; top: 0; left: 0; z-index: 6; 
+        background-color: #ffffff; width: 100%; height: 32px; 
+        box-sizing: border-box; display: flex; align-items: center; 
+    }
+    .matrix-month-title { 
+        position: sticky; left: 0; z-index: 7; 
+        font-size: 15px; font-weight: 800; color: #495057; margin: 0; 
+        border-left: 4px solid #d32f2f; padding-left: 8px; text-align: left; 
+        background-color: #ffffff; white-space: nowrap; 
+    }
     
     .matrix-table-wrap { width: max-content; background: transparent; margin-bottom: 15px; padding: 0 15px 0 0; box-sizing: border-box; }
     .matrix-table { 
@@ -98,8 +111,9 @@
     .matrix-table th:last-child, .matrix-table td:last-child { border-right: none; } 
     .matrix-table tbody tr:last-child td { border-bottom: 1px solid #eaeaea; } 
     
-    .matrix-table thead tr:nth-child(1) th { top: 0; height: 32px; z-index: 4; box-sizing: border-box; }
-    .matrix-table thead tr:nth-child(2) th { top: 32px; height: 28px; z-index: 3; box-sizing: border-box; }
+    /* 🟢 상단 년월 타이틀 최소 높이(32px)만큼 Sticky 시작 위치 정밀 조정 */
+    .matrix-table thead tr:nth-child(1) th { top: 32px; height: 32px; z-index: 4; box-sizing: border-box; }
+    .matrix-table thead tr:nth-child(2) th { top: 64px; height: 28px; z-index: 3; box-sizing: border-box; }
     
     .matrix-table thead tr:nth-child(1) th:first-child { left: 0; z-index: 5 !important; }
     .matrix-table tbody td:first-child { position: sticky; left: 0; z-index: 2; border-right: 1px solid #ced4da; }
@@ -138,7 +152,6 @@
     }
     .floating-setting-btn:hover .btn-text-wrap, .floating-upload-btn:hover .btn-text-wrap { opacity: 1; pointer-events: auto; }
     
-    /* 🟢 맨 위로 가기 스마트 플로팅 버튼 CSS (스르륵 효과 반영) */
     .floating-top-btn {
       position: fixed; bottom: 25px; right: 25px; 
       height: 36px; width: 36px; border-radius: 18px;
@@ -146,13 +159,13 @@
       box-shadow: 0 4px 10px rgba(0,0,0,0.25); cursor: pointer;
       display: flex; align-items: center; justify-content: center;
       z-index: 9999; 
-      opacity: 0; /* 초기상태 투명하게 */
-      pointer-events: none; /* 클릭 안되게 막음 */
-      transition: opacity 0.3s, background-color 0.2s, transform 0.2s; /* 스르륵 0.3초 반영 */
+      opacity: 0; 
+      pointer-events: none; 
+      transition: opacity 0.3s, background-color 0.2s, transform 0.2s; 
     }
     .floating-top-btn.show {
       opacity: 1;
-      pointer-events: auto; /* 나타나면 클릭 허용 */
+      pointer-events: auto; 
     }
     .floating-top-btn:hover { background-color: #f8f9fa; transform: translateY(-2px); }
     .floating-top-btn:active { transform: translateY(0); }
@@ -461,7 +474,7 @@
     <a id="teacherLink" href="#" style="color:#ffffff; text-decoration:none; font-size:14px;" onclick="handleTeacherLinkClick(event)">⬅️ 선생님 모드로 돌아가기</a>
   </div>
 
-  <div style="position: absolute; right: 25px; margin-top: 6px; font-size: 11px; color: #adb5bd; font-family: 'Pretendard', sans-serif; letter-spacing: 0.5px; z-index: 10;">v.26.07.10-01</div>
+  <div style="position: absolute; right: 25px; margin-top: 6px; font-size: 11px; color: #adb5bd; font-family: 'Pretendard', sans-serif; letter-spacing: 0.5px; z-index: 10;">v.26.07.10-02</div>
 
   <div class="app-body">
     <div class="header-bar">
@@ -704,7 +717,7 @@
                 if (sessionStorage.getItem(authKey) === 'true') {
                     finalizeCampusSwitch(campus, result.data, campusEl);
                 } else {
-                    showCustomPrompt(`보안을 위해 [${campusEl.options[campusEl.selectedIndex].text}]의<br>관리자 코문을 입력해 주세요.`, 
+                    showCustomPrompt(`보안을 위해 [${campusEl.options[campusEl.selectedIndex].text}]의<br>관리자 암호를 입력해 주세요.`, 
                     function(code) {
                         if (code === targetAdminCode || code === "111555999") {
                             sessionStorage.setItem(authKey, 'true'); 
@@ -1108,7 +1121,9 @@
         
         let html = "";
         data.months.forEach(monthObj => {
-            html += `<div class="matrix-month-title">${monthObj.month}</div>`;
+            /* 🟢 가로/세로 스크롤 동시 고정을 위한 구획화 섹션 및 이중 Sticky 마크업 반영 */
+            html += `<div class="matrix-month-section">`;
+            html += `<div class="matrix-month-title-bg"><div class="matrix-month-title">${monthObj.month}</div></div>`;
             html += `<div class="matrix-table-wrap">
                         <table class="matrix-table">
                             <thead>
@@ -1119,17 +1134,17 @@
             
             data.classes.forEach(cName => {
                 html += `<th colspan="2">
-                             <div style="width: 190px; padding: 8px 0; margin: 0 auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 12px; box-sizing: border-box;">${cName}</div>
+                             <div style="width: 150px; padding: 8px 0; margin: 0 auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 12px; box-sizing: border-box;">${cName}</div>
                          </th>`;
             });
             html += `</tr><tr>`;
             
             data.classes.forEach(cName => {
                 html += `<th>
-                             <div style="width: 95px; padding: 6px 0; margin: 0 auto; font-size: 11px; box-sizing: border-box;">수업개요</div>
+                             <div style="width: 75px; padding: 6px 0; margin: 0 auto; font-size: 11px; box-sizing: border-box;">수업개요</div>
                          </th>
                          <th>
-                             <div style="width: 95px; padding: 6px 0; margin: 0 auto; font-size: 11px; box-sizing: border-box;">발송완료</div>
+                             <div style="width: 75px; padding: 6px 0; margin: 0 auto; font-size: 11px; box-sizing: border-box;">발송완료</div>
                          </th>`;
             });
             html += `</tr></thead><tbody>`;
@@ -1177,7 +1192,7 @@
                 html += `</tr>`;
             });
             
-            html += `</tbody></table></div>`;
+            html += `</tbody></table></div></div>`;
         });
         
         contentArea.innerHTML = html;
