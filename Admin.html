@@ -474,7 +474,7 @@
     <a id="teacherLink" href="#" style="color:#ffffff; text-decoration:none; font-size:14px;" onclick="handleTeacherLinkClick(event)">⬅️ 선생님 모드로 돌아가기</a>
   </div>
 
-  <div style="position: absolute; right: 25px; margin-top: 6px; font-size: 11px; color: #adb5bd; font-family: 'Pretendard', sans-serif; letter-spacing: 0.5px; z-index: 10;">v.26.07.10-02</div>
+  <div style="position: absolute; right: 25px; margin-top: 6px; font-size: 11px; color: #adb5bd; font-family: 'Pretendard', sans-serif; letter-spacing: 0.5px; z-index: 10;">v.26.07.10-03</div>
 
   <div class="app-body">
     <div class="header-bar">
@@ -985,10 +985,12 @@
              group.classChunksArray.forEach(chunk => {
                  let clsName = chunk.name;
                  html += `<div class="class-sub-header">▶ 반명: ${clsName}</div>`;
-                 html += `<table><thead><tr><th width="4%">No.</th><th width="8%">학생명</th><th width="5%">학교</th><th width="4%">학년</th><th width="20%">금일수업개요</th><th width="5%">과제</th><th width="5%">오답</th><th width="5%">일일테스트</th><th width="5%">주간테스트</th><th width="18%">학생별 특이사항 / 보강계획</th><th width="6%">발송완료</th><th width="6%">관리자 확인<br><label style="display:inline-flex; align-items:center; cursor:pointer; justify-content:center;"><input type="checkbox" class="master-checkbox" style="margin:4px 2px;" onchange="toggleAdminChunkMaster('${group.teacher}', '${clsName}', this.checked)"></label></th></tr></thead><tbody>`;
+                 // 🟢 마스터 체크박스에 data 속성 적용 (안전한 식별자)
+                 html += `<table><thead><tr><th width="4%">No.</th><th width="8%">학생명</th><th width="5%">학교</th><th width="4%">학년</th><th width="20%">금일수업개요</th><th width="5%">과제</th><th width="5%">오답</th><th width="5%">일일테스트</th><th width="5%">주간테스트</th><th width="18%">학생별 특이사항 / 보강계획</th><th width="6%">발송완료</th><th width="6%">관리자 확인<br><label style="display:inline-flex; align-items:center; cursor:pointer; justify-content:center;"><input type="checkbox" class="master-checkbox" style="margin:4px 2px;" data-teacher="${group.teacher}" data-class="${clsName}" onchange="toggleAdminChunkMaster(this)"></label></th></tr></thead><tbody>`;
                  
                  chunk.details.forEach((r, idx) => {
-                    let leadCheckHtml = `<input type="checkbox" class="lead-check-${group.teacher} chunk-${group.teacher}-${clsName.replace(/\s+/g,'_')}" data-row="${r.rowIdx}" onchange="trackLeadCheck('${group.teacher}', parseInt(this.dataset.row), this.checked)" ${r.leadCheck ? 'checked' : ''}>`;
+                    // 🟢 개별 체크박스에 individual-lead-check 공통 클래스와 data 속성 적용 (안전한 식별자)
+                    let leadCheckHtml = `<input type="checkbox" class="individual-lead-check" data-teacher="${group.teacher}" data-class="${clsName}" data-row="${r.rowIdx}" onchange="trackLeadCheck(this.dataset.teacher, parseInt(this.dataset.row), this.checked)" ${r.leadCheck ? 'checked' : ''}>`;
                     let sendCheckHtml = `<input type="checkbox" ${r.sendCheck ? 'checked' : ''} disabled>`;
                     
                     let displaySubject = r.subject ? r.subject.replace(/\n/g, ' ↵ ') : '-';
@@ -1020,24 +1022,28 @@
         .loadAdminWorkflow(dateVal, teacher);
     }
 
-    function toggleAdminChunkMaster(teacher, className, isChecked) {
-       let clsKey = className.replace(/\s+/g,'_');
-       let checkboxes = document.querySelectorAll('.chunk-' + teacher + '-' + clsKey);
+    // 🟢 data 속성 기반으로 그룹 체크 기능 리팩토링 (특수문자 오류 원천 차단)
+    function toggleAdminChunkMaster(masterCb) {
+       let teacher = masterCb.dataset.teacher;
+       let className = masterCb.dataset.class;
+       let isChecked = masterCb.checked;
+       
+       let checkboxes = document.querySelectorAll('.individual-lead-check');
        checkboxes.forEach(cb => {
-           if(!cb.disabled) { cb.checked = isChecked; trackLeadCheck(teacher, parseInt(cb.dataset.row), isChecked); }
+           if(cb.dataset.teacher === teacher && cb.dataset.class === className && !cb.disabled) { 
+               cb.checked = isChecked; 
+               trackLeadCheck(teacher, parseInt(cb.dataset.row), isChecked); 
+           }
        });
     }
     
+    // 🟢 data 속성 기반으로 전체 체크 기능 리팩토링
     function toggleAllLeadChecks(isChecked) {
-       let individualChecks = document.querySelectorAll('input[type="checkbox"][class*="lead-check-"]');
+       let individualChecks = document.querySelectorAll('.individual-lead-check');
        individualChecks.forEach(cb => {
            if(!cb.disabled) {
                cb.checked = isChecked;
-               let teacherCls = Array.from(cb.classList).find(c => c.startsWith('lead-check-'));
-               if(teacherCls) {
-                  let teacher = teacherCls.replace('lead-check-', '');
-                  trackLeadCheck(teacher, parseInt(cb.dataset.row), isChecked);
-               }
+               trackLeadCheck(cb.dataset.teacher, parseInt(cb.dataset.row), isChecked);
            }
        });
        let masterChecks = document.querySelectorAll('.master-checkbox');
