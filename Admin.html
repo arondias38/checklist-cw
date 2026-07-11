@@ -40,7 +40,7 @@
     .setting-section { text-align: left; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #eaeaea; height: 120px; box-sizing: border-box; display: flex; flex-direction: column; }
     .setting-section.last { border-bottom: none; margin-bottom: 0; padding-bottom: 0; height: 104px; }
     .setting-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-shrink: 0; }
-    .setting-desc { font-size: 13px; color: #666; line-height: 1.4; margin-bottom: auto; } /* 12->13 */
+    .setting-desc { font-size: 13px; color: #666; line-height: 1.4; margin-bottom: auto; } 
     .setting-input { display: flex; gap: 10px; align-items: center; flex-shrink: 0; height: 30px; }
 
     .history-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 10001; justify-content: center; align-items: center; }
@@ -50,7 +50,6 @@
     .history-close-btn:hover { color: #333; }
     .history-content { overflow-y: auto; flex: 1; border-top: 1px solid #eaeaea; border-bottom: 1px solid #eaeaea; }
     
-    /* 🟢 폰트 1px 증가 적용 */
     .history-table { width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 0; } 
     .history-table th { background-color: #f8f9fa; font-weight: bold; padding: 10px 8px; text-align: center; border-bottom: 1px solid #eaeaea; border-right: 1px solid #eaeaea; color: #333; position: sticky; top: 0; z-index: 2; border-top: none; border-left: none; }
     .history-table td { padding: 8px; text-align: center; border-bottom: 1px solid #eaeaea; border-right: 1px solid #eaeaea; vertical-align: middle; border-top: none; border-left: none; }
@@ -80,7 +79,6 @@
     }
     
     .matrix-table-wrap { width: max-content; background: transparent; margin-bottom: 15px; padding: 0 15px 0 0; box-sizing: border-box; }
-    /* 🟢 폰트 1px 증가 적용 */
     .matrix-table { 
         width: max-content; 
         border-collapse: separate; 
@@ -176,9 +174,8 @@
     .select-group { display: flex; align-items: center; gap: 10px; position: relative; }
     label { font-weight: bold; font-size: 14px; color: #333; }
     
-    /* 🟢 폰트 1px 증가 적용 */
     select, input[type="date"] { 
-     width: 190px; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-family: 'Pretendard', sans-serif; font-size: 14px; font-weight: normal; color: #333; outline: none; height: 38px; box-sizing: border-box; cursor: pointer; 
+      width: 190px; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-family: 'Pretendard', sans-serif; font-size: 14px; font-weight: normal; color: #333; outline: none; height: 38px; box-sizing: border-box; cursor: pointer; 
     }
     select {
       appearance: none; -webkit-appearance: none;
@@ -190,7 +187,6 @@
     #upTermName:invalid { color: #b0b0b0 !important; }
     
     .custom-date-wrapper { position: relative; width: 190px; height: 38px; cursor: pointer; overflow: hidden; }
-    /* 🟢 폰트 1px 증가 적용 */
     .date-display { width: 100%; height: 100%; border: 1px solid #ced4da; border-radius: 4px; padding: 8px 12px; font-family: 'Pretendard', sans-serif; font-size: 14px; font-weight: normal; color: #888888; background: #fff url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23333"><path d="M7 10l5 5 5-5z"/></svg>') no-repeat right 10px center; background-size: 20px; display: flex; align-items: center; box-sizing: border-box; position: absolute; top:0; left:0; z-index: 1; pointer-events: none; }
     .date-display.selected { color: #333; }
     .hidden-date-input { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 10; box-sizing: border-box; border: none; padding: 0; margin: 0; }
@@ -202,7 +198,6 @@
     .btn-save-admin { height: 38px; width: 190px; padding: 0; box-sizing: border-box; border: none; border-radius: 50px; font-weight: bold; cursor: pointer; font-size: 14px; background-color: #d32f2f; color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.15); transition: 0.2s; display: none; flex-direction: column; align-items: center; justify-content: center; }
     .btn-save-admin:hover { background-color: #b71c1c; }
     
-    /* 🟢 폰트 1px 증가 적용 */
     .summary-banner { background: #fff; padding: 12px 20px; border-radius: 8px; margin-bottom: 20px; font-size: 15px; font-weight: bold; color: #333; border: 1px solid #dee2e6; box-shadow: 0 2px 4px rgba(0,0,0,0.05); display: none; flex-wrap: wrap; gap: 10px; }
     .summary-card { flex: 0 0 calc(50% - 5px); width: calc(50% - 5px); min-width: 340px; display: flex; align-items: center; background-color: #f8f9fa; border: 1px solid #e9ecef; padding: 6px 12px; border-radius: 6px; box-sizing: border-box; }
     
@@ -222,19 +217,58 @@
     .t-info { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: bold; flex-wrap: wrap; flex: 1; }
     .t-alert { color: #dc3545; font-weight: 900; }
     
-    .main-container { background-color: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); min-height: 500px; }
-    .empty-state { display: flex; justify-content: center; align-items: center; color: #888; border: 2px dashed #dee2e6; border-radius: 6px; height: 300px; font-weight: bold; }
+    .main-container { display: flex; flex-direction: column; background-color: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); min-height: calc(100vh - 180px); }
+    .empty-state { flex: 1; display: flex; justify-content: center; align-items: center; color: #888; border: 2px dashed #dee2e6; border-radius: 6px; min-height: calc(100vh - 225px); font-weight: bold; width: 100%; box-sizing: border-box; }
     
-    .teacher-group { margin-bottom: 40px; }
-    .teacher-header { font-size: 18px; font-weight: 900; color: #1a3978; margin-bottom: 15px; border-bottom: 2px solid #1a3978; padding-bottom: 5px; }
-    .class-sub-header { font-size: 16px; font-weight: 700; color: #495057; margin: 15px 0 6px 0; background-color: #f1f3f5; padding: 6px 12px; border-radius: 4px; border-left: 4px solid #1a3978; text-align: left;}
+    /* 🟢 계층형 스마트 스크롤 CSS 수정: 여백/디자인 완벽 복구 및 톱니바퀴 재계산 */
+    .teacher-group { position: relative; padding-bottom: 20px; margin-bottom: 20px; }
+    
+    .teacher-header { 
+        position: sticky; top: 0; z-index: 20; 
+        font-size: 18px; font-weight: 900; color: #1a3978; 
+        margin: 0; padding: 12px 0 5px 0; 
+        height: 40px; box-sizing: border-box; line-height: 1.2;
+    }
+    .teacher-header::before { 
+        content: ""; position: absolute;
+        top: 0; bottom: 0; left: -10px; right: -10px;
+        background-color: #fff; z-index: -1;
+    }
+    .teacher-header::after { 
+        content: ""; position: absolute;
+        bottom: 0; left: 0; right: 0; height: 2px;
+        background-color: #1a3978; z-index: 1;
+    }
+    
+    .class-group { position: relative; margin-top: 15px; padding-bottom: 10px; }
+    
+    .class-sub-header { 
+        position: sticky; top: 55px; z-index: 19; 
+        font-size: 15px; font-weight: 700; color: #495057; 
+        margin: 0 0 6px 0; padding: 0 12px; 
+        background-color: #f1f3f5; border-radius: 4px; border-left: 4px solid #1a3978; 
+        height: 34px; display: flex; align-items: center; box-sizing: border-box;
+    }
+    .class-sub-header::before { 
+        content: ""; position: absolute;
+        top: -15px; left: -10px; right: -10px; height: 15px;
+        background-color: #fff; z-index: -1;
+    }
+    .class-sub-header::after { 
+        content: ""; position: absolute;
+        bottom: -6px; left: -10px; right: -10px; height: 6px;
+        background-color: #fff; z-index: -1;
+    }
 
-    /* 🟢 폰트 1px 증가 적용 */
-    table { width: 100%; border-collapse: collapse; font-size: 14px; table-layout: fixed; margin-bottom: 25px; }
-    th, td { border: 1px solid #dee2e6; padding: 8px 4px; text-align: center; vertical-align: middle; }
-    th { background-color: #f8f9fa; font-weight: bold; color: #333; }
+    table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 14px; table-layout: fixed; margin-bottom: 0; border-left: 1px solid #dee2e6; }
+    th, td { border-bottom: 1px solid #dee2e6; border-right: 1px solid #dee2e6; padding: 8px 4px; text-align: center; vertical-align: middle; box-sizing: border-box; }
     
-    /* 🟢 폰트 1px 증가 및 줄 높이에 따른 max-height 보정 (40px -> 42px) */
+    thead th { 
+        background-color: #f8f9fa; font-weight: bold; color: #333; 
+        position: sticky; top: 95px; z-index: 18; height: 38px; 
+        border-top: 1px solid #dee2e6; box-sizing: border-box; 
+    }
+    
     .readonly-text { width: 100%; box-sizing: border-box; font-family: 'Pretendard', sans-serif; font-size: 14px; color: #333; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .readonly-note { width: 100%; box-sizing: border-box; font-family: 'Pretendard', sans-serif; font-size: 14px; color: #333; text-align: left; padding: 0 4px; max-height: 42px; overflow-y: auto; overflow-x: hidden; display: block; line-height: 1.4; word-break: break-all; }
     
@@ -244,7 +278,6 @@
     .term-row { display: flex; align-items: center; gap: 8px; background: white; padding: 10px; border-radius: 8px; margin-bottom: 8px; border: 1px solid #ced4da; transition: 0.2s; }
     .term-row.deleted { opacity: 0.6; filter: grayscale(50%); border-color: #dc3545; }
     
-    /* 🟢 폰트 1px 증가 적용 */
     .term-input { width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 14px; font-family: 'Pretendard', sans-serif; outline: none; height: 38px; box-sizing: border-box; text-align: center; }
     .term-input:disabled { background-color: #e9ecef; color: #6c757d; }
     .term-input:focus { border-color: #1366ce; }
@@ -307,7 +340,8 @@
       
       <div class="setting-section">
          <div class="setting-header">
-           <div style="font-size:15px; font-weight:bold; color:#333;">🏢 학원명 설정</div> <button class="modal-btn btn-ok" style="padding: 4px 15px; font-size: 12px; height: 28px; border-radius: 50px; min-width: 60px; line-height: 1;" onclick="saveAcademyNameSetting()">저장</button>
+           <div style="font-size:15px; font-weight:bold; color:#333;">🏢 학원명 설정</div>
+           <button class="modal-btn btn-ok" style="padding: 4px 15px; font-size: 12px; height: 28px; border-radius: 50px; min-width: 60px; line-height: 1;" onclick="saveAcademyNameSetting()">저장</button>
          </div>
          <div class="setting-desc">메인 학원명 및 복사 항목에 들어갈 학원명을 설정합니다.<br>(캠퍼스 선택의 학원명은 수정되지 않습니다.)</div>
          <div class="setting-input">
@@ -317,7 +351,8 @@
 
       <div class="setting-section">
          <div class="setting-header">
-           <div style="font-size:15px; font-weight:bold; color:#333;">🔑 관리자 코드 설정</div> <button class="modal-btn btn-ok" style="padding: 4px 15px; font-size: 12px; height: 28px; border-radius: 50px; min-width: 60px; line-height: 1;" onclick="saveAdminCodeSetting()">저장</button>
+           <div style="font-size:15px; font-weight:bold; color:#333;">🔑 관리자 코드 설정</div>
+           <button class="modal-btn btn-ok" style="padding: 4px 15px; font-size: 12px; height: 28px; border-radius: 50px; min-width: 60px; line-height: 1;" onclick="saveAdminCodeSetting()">저장</button>
          </div>
          <div class="setting-desc">선생님 앱에서 관리자 모드로 진입할 때 사용하는 암호를 설정합니다.</div>
          <div class="setting-input">
@@ -327,17 +362,20 @@
 
       <div class="setting-section">
          <div class="setting-header">
-           <div style="font-size:15px; font-weight:bold; color:#333;">🕒 선생님 앱 지난 학기 표시</div> <button class="modal-btn btn-ok" style="padding: 4px 15px; font-size: 12px; height: 28px; border-radius: 50px; min-width: 60px; line-height: 1;" onclick="savePastDaysSetting()">저장</button>
+           <div style="font-size:15px; font-weight:bold; color:#333;">🕒 선생님 앱 지난 학기 표시</div>
+           <button class="modal-btn btn-ok" style="padding: 4px 15px; font-size: 12px; height: 28px; border-radius: 50px; min-width: 60px; line-height: 1;" onclick="savePastDaysSetting()">저장</button>
          </div>
          <div class="setting-desc">현재 학기 시작일로부터 며칠 동안 노출할지 설정합니다.<br>(지정된 일수가 지나면 선생님 앱 목록에서 숨겨집니다.)</div>
          <div class="setting-input">
            <input type="number" id="settingPastDays" style="width: 100px; padding: 6px 10px; border: 1px solid #ced4da; border-radius: 4px; text-align: center; font-weight:bold;" min="0">
-           <span style="font-size:14px; font-weight:bold; color:#555;">일 동안 노출</span> </div>
+           <span style="font-size:14px; font-weight:bold; color:#555;">일 동안 노출</span>
+         </div>
       </div>
 
       <div class="setting-section">
          <div class="setting-header">
-           <div style="font-size:15px; font-weight:bold; color:#333;">📋 특정 학기 명단 관리</div> <button class="modal-btn" style="background-color:#dc3545; color:white; border-radius: 50px; padding: 4px 15px; font-size: 12px; height: 28px; min-width: 60px; border:none; cursor:pointer; line-height: 1;" onclick="openTermManageModal()">명단 수정 / 삭제</button>
+           <div style="font-size:15px; font-weight:bold; color:#333;">📋 특정 학기 명단 관리</div>
+           <button class="modal-btn" style="background-color:#dc3545; color:white; border-radius: 50px; padding: 4px 15px; font-size: 12px; height: 28px; min-width: 60px; border:none; cursor:pointer; line-height: 1;" onclick="openTermManageModal()">명단 수정 / 삭제</button>
          </div>
          <div class="setting-desc">선택한 학기의 명단 파일을 수정 또는 삭제 합니다.<br>(※ <span style="color:#dc3545; font-weight:bold;">명단 삭제 후에는 복구가 불가능</span>)</div>
          <div class="setting-input"></div>
@@ -345,7 +383,8 @@
 
       <div class="setting-section last" style="height: 140px;">
          <div class="setting-header">
-           <div style="font-size:15px; font-weight:bold; color:#333;">💾 데이터 통합 백업 및 삭제</div> <div style="display:flex; gap: 5px;">
+           <div style="font-size:15px; font-weight:bold; color:#333;">💾 데이터 통합 백업 및 삭제</div>
+           <div style="display:flex; gap: 5px;">
                <button class="modal-btn" style="background-color:#6c757d; color:white; border-radius: 50px; padding: 4px 15px; font-size: 12px; height: 28px; border:none; cursor:pointer;" onclick="viewBackupLogs()">로그 확인</button>
                <button class="modal-btn" style="background-color:#dc3545; color:white; border-radius: 50px; padding: 4px 15px; font-size: 12px; height: 28px; min-width: 60px; border:none; cursor:pointer; line-height: 1;" onclick="runIntegratedBackup()">데이터 백업 / 삭제</button>
            </div>
@@ -392,20 +431,23 @@
 
       <div style="display: flex; gap: 15px; margin-bottom: 15px; text-align: left;">
          <div style="flex:1;">
-            <label style="font-size:13px; color:#555; display:block; margin-bottom:4px;">시작 날짜 <span style="color:#dc3545;">*</span></label> <div class="custom-date-wrapper" style="width: 100%;" onclick="let el=document.getElementById('upStartDate'); if(el.showPicker) el.showPicker();">
+            <label style="font-size:13px; color:#555; display:block; margin-bottom:4px;">시작 날짜 <span style="color:#dc3545;">*</span></label>
+            <div class="custom-date-wrapper" style="width: 100%;" onclick="let el=document.getElementById('upStartDate'); if(el.showPicker) el.showPicker();">
                <div class="date-display empty-placeholder" id="upStartDateDisplay" style="color: #b0b0b0;">학기 적용 시작 날짜를 입력하세요.</div>
                <input type="date" id="upStartDate" class="hidden-date-input" onchange="updateModalDate(this, 'upStartDateDisplay')">
             </div>
          </div>
          <div style="flex:1;">
-            <label style="font-size:13px; color:#555; display:block; margin-bottom:4px;">종료 날짜 <span style="color:#dc3545;">*</span></label> <div class="custom-date-wrapper" style="width: 100%;" onclick="let el=document.getElementById('upEndDate'); if(el.showPicker) el.showPicker();">
+            <label style="font-size:13px; color:#555; display:block; margin-bottom:4px;">종료 날짜 <span style="color:#dc3545;">*</span></label>
+            <div class="custom-date-wrapper" style="width: 100%;" onclick="let el=document.getElementById('upEndDate'); if(el.showPicker) el.showPicker();">
                <div class="date-display empty-placeholder" id="upEndDateDisplay" style="color: #b0b0b0;">학기 적용 종료 날짜를 입력하세요.</div>
                <input type="date" id="upEndDate" class="hidden-date-input" onchange="updateModalDate(this, 'upEndDateDisplay')">
             </div>
          </div>
       </div>
       <div style="text-align: left; margin-bottom: 25px;">
-         <label style="font-size:13px; color:#555; display:block; margin-bottom:4px;">학기 <span style="color:#dc3545;">*</span></label> <select id="upTermName" required style="width:100%; height:38px; padding:8px 12px;">
+         <label style="font-size:13px; color:#555; display:block; margin-bottom:4px;">학기 <span style="color:#dc3545;">*</span></label>
+         <select id="upTermName" required style="width:100%; height:38px; padding:8px 12px;">
             <option value="" disabled selected hidden>학기를 선택하세요.</option>
             <option value="봄학기">봄학기</option>
             <option value="여름학기">여름학기</option>
@@ -417,7 +459,8 @@
       <div id="dropZone" style="border: 2px dashed #1366ce; border-radius: 8px; padding: 40px 15px; background-color: #f8f9fa; cursor: pointer; transition: 0.2s; margin-bottom:20px;">
          <div style="font-size:32px; margin-bottom:10px;">📂</div>
          <div style="font-size:15px; font-weight:bold; color:#1366ce; margin-bottom:8px;">엑셀 파일을 이곳에 끌어다 놓거나 클릭하세요.</div>
-         <div style="font-size:13px; color:#888; line-height: 1.4;"> ※ ACA2000 다운로드 원본 파일 그대로 업로드 가능<br>
+         <div style="font-size:13px; color:#888; line-height: 1.4;">
+            ※ ACA2000 다운로드 원본 파일 그대로 업로드 가능<br>
             (시스템이 자동으로 열 위치를 탐색하여 정렬합니다)<br><br>
             - 기본 목록: 반명, 학생명, 학교명, 학년, 담임, 강의실
          </div>
@@ -470,7 +513,7 @@
     <a id="teacherLink" href="#" style="color:#ffffff; text-decoration:none; font-size:14px;" onclick="handleTeacherLinkClick(event)">⬅️ 선생님 모드로 돌아가기</a>
   </div>
 
-  <div style="position: absolute; right: 25px; margin-top: 6px; font-size: 11px; color: #adb5bd; font-family: 'Pretendard', sans-serif; letter-spacing: 0.5px; z-index: 10;">v.26.07.10-04</div>
+  <div style="position: absolute; right: 25px; margin-top: 6px; font-size: 11px; color: #adb5bd; font-family: 'Pretendard', sans-serif; letter-spacing: 0.5px; z-index: 10;">v.26.07.11-01</div>
 
   <div class="app-body">
     <div class="header-bar">
@@ -513,9 +556,9 @@
 
     <div class="summary-banner" id="summaryBanner"></div>
 
-    <div class="main-container">
+    <div id="mainContainerBox" class="main-container">
       <div class="empty-state" id="emptyState">상단의 캠퍼스, 날짜, 담임 항목을 선택 후 [명단 조회하기]를 눌러주세요.</div>
-      <div id="contentArea" style="display:none;"></div>
+      <div id="contentArea" style="display:none; width:100%;"></div>
     </div>
   </div>
 
@@ -980,12 +1023,11 @@
              
              group.classChunksArray.forEach(chunk => {
                  let clsName = chunk.name;
+                 html += `<div class="class-group">`;
                  html += `<div class="class-sub-header">▶ 반명: ${clsName}</div>`;
-                 // 🟢 마스터 체크박스에 data 속성 적용 (안전한 식별자)
                  html += `<table><thead><tr><th width="4%">No.</th><th width="8%">학생명</th><th width="5%">학교</th><th width="4%">학년</th><th width="20%">금일수업개요</th><th width="5%">과제</th><th width="5%">오답</th><th width="5%">일일테스트</th><th width="5%">주간테스트</th><th width="18%">학생별 특이사항 / 보강계획</th><th width="6%">발송완료</th><th width="6%">관리자 확인<br><label style="display:inline-flex; align-items:center; cursor:pointer; justify-content:center;"><input type="checkbox" class="master-checkbox" style="margin:4px 2px;" data-teacher="${group.teacher}" data-class="${clsName}" onchange="toggleAdminChunkMaster(this)"></label></th></tr></thead><tbody>`;
                  
                  chunk.details.forEach((r, idx) => {
-                    // 🟢 개별 체크박스에 individual-lead-check 공통 클래스와 data 속성 적용 (안전한 식별자)
                     let leadCheckHtml = `<input type="checkbox" class="individual-lead-check" data-teacher="${group.teacher}" data-class="${clsName}" data-row="${r.rowIdx}" onchange="trackLeadCheck(this.dataset.teacher, parseInt(this.dataset.row), this.checked)" ${r.leadCheck ? 'checked' : ''}>`;
                     let sendCheckHtml = `<input type="checkbox" ${r.sendCheck ? 'checked' : ''} disabled>`;
                     
@@ -998,6 +1040,7 @@
                     html += `<tr><td style="background-color:#f8f9fa;">${String(idx + 1).padStart(2, '0')}</td><td style="padding-right:6px;"><div class="readonly-text" style="position:relative; display:flex; justify-content:center; align-items:center; width:100%; min-height:20px;"><b>${r.studentName}</b><div style="position:absolute; right:2px; display:flex;">${searchIcon}</div></div></td><td><div class="readonly-text">${r.school || '-'}</div></td><td><div class="readonly-text">${r.grade || '-'}</div></td><td><div class="readonly-note">${displaySubject}</div></td><td><div class="readonly-text">${r.evalScore || '-'}</div></td><td><div class="readonly-text">${r.wrongScore || '-'}</div></td><td><div class="readonly-text">${r.dailyTest || '-'}</div></td><td><div class="readonly-text">${r.weeklyTest || '-'}</div></td><td>${noteHtml}</td><td>${sendCheckHtml}</td><td>${leadCheckHtml}</td></tr>`;
                  });
                  html += `</tbody></table>`;
+                 html += `</div>`; 
              });
              html += `</div>`;
              content.innerHTML += html;
@@ -1019,7 +1062,6 @@
         .loadAdminWorkflow(dateVal, teacher);
     }
 
-    // 🟢 data 속성 기반으로 그룹 체크 기능 리팩토링 (특수문자 오류 원천 차단)
     function toggleAdminChunkMaster(masterCb) {
        let teacher = masterCb.dataset.teacher;
        let className = masterCb.dataset.class;
@@ -1034,7 +1076,6 @@
        });
     }
     
-    // 🟢 data 속성 기반으로 전체 체크 기능 리팩토링
     function toggleAllLeadChecks(isChecked) {
        let individualChecks = document.querySelectorAll('.individual-lead-check');
        individualChecks.forEach(cb => {
@@ -1109,7 +1150,6 @@
                 else if (data.summary.sentDone < data.summary.sentExpected) sentStyleTop = "color:#28a745; font-weight:bold;"; 
             }
             
-            /* 🟢 폰트 1px 증가 적용 */
             sumHtml = ` <span style="font-size:15px; font-weight:normal;">( 이번 학기 수업개요입력 <span style="${subjStyle}">${subjPct}%</span> &nbsp;|&nbsp; 발송완료체크 <span style="${sentStyleTop}">${sentPct}%</span> )</span>`;
         }
         document.getElementById("matrixTitle").innerHTML = `<b>${data.teacherName}</b> 선생님 학기 요약${sumHtml}`;
@@ -1125,7 +1165,6 @@
         
         let html = "";
         data.months.forEach(monthObj => {
-            /* 🟢 가로/세로 스크롤 동시 고정을 위한 구획화 섹션 및 이중 Sticky 마크업 반영 */
             html += `<div class="matrix-month-section">`;
             html += `<div class="matrix-month-title-bg"><div class="matrix-month-title">${monthObj.month}</div></div>`;
             html += `<div class="matrix-table-wrap">
@@ -1137,7 +1176,6 @@
                                     </th>`;
             
             data.classes.forEach(cName => {
-                /* 🟢 폰트 1px 증가 적용 */
                 html += `<th colspan="2">
                              <div style="width: 150px; padding: 8px 0; margin: 0 auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 13px; box-sizing: border-box;">${cName}</div>
                          </th>`;
@@ -1145,12 +1183,11 @@
             html += `</tr><tr>`;
             
             data.classes.forEach(cName => {
-                /* 🟢 폰트 1px 증가 적용 */
                 html += `<th>
-                             <div style="width: 75px; padding: 6px 0; margin: 0 auto; font-size: 12px; box-sizing: border-box;">수업개요</div>
+                             <div style="width: 75px; padding: 6px 0; margin: 0 auto; font-size: 11px; box-sizing: border-box;">수업개요</div>
                          </th>
                          <th>
-                             <div style="width: 75px; padding: 6px 0; margin: 0 auto; font-size: 12px; box-sizing: border-box;">발송완료</div>
+                             <div style="width: 75px; padding: 6px 0; margin: 0 auto; font-size: 11px; box-sizing: border-box;">발송완료</div>
                          </th>`;
             });
             html += `</tr></thead><tbody>`;
@@ -1174,8 +1211,7 @@
                     if (!cellData.isActive) {
                         html += `<td style="background-color:#f8f9fa;"></td><td style="background-color:#f8f9fa;"></td>`;
                     } else if (cellData.isHolidayEmpty) {
-                        /* 🟢 폰트 1px 증가 적용 */
-                        html += `<td colspan="2" style="color:#dc3545; font-weight:bold; font-size:12px; background-color:#fff0f0;">${cellData.holidayName}</td>`;
+                        html += `<td colspan="2" style="color:#dc3545; font-weight:bold; font-size:11px; background-color:#fff0f0;">${cellData.holidayName}</td>`;
                     } else {
                         let subjStyle = 'color:#333;';
                         if (cellData.activeCount > 0 && !cellData.subjComplete) {
@@ -1209,7 +1245,7 @@
 
     function closeMatrixPopup() {
         document.getElementById("matrixOverlay").style.display = "none";
-        document.body.style.overflow = '';
+        document.body.style.overflow = ''; //
     }
 
     function openHistoryPopup(teacher, className, studentName) {
@@ -1217,10 +1253,8 @@
       if (!dateVal) return;
       
       showLoading(true, "해당 학생의 학기 기록을 불러오는 중입니다...");
-      /* 🟢 폰트 1px 증가 적용 */
       document.getElementById("historyTitle").innerHTML = `<b>${studentName}</b> 학생 기록 <span style="font-size:14px; color:#666; font-weight:normal;">(${className})</span>`;
       
-      // 👉 수정된 부분: 성공/실패 시 로딩을 끄고 팝업을 띄우는 처리 추가
       google.script.run
         .withSuccessHandler(function(historyData) {
           showLoading(false);
