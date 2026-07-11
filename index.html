@@ -1592,10 +1592,12 @@
         
         contentArea.innerHTML = html;
         document.getElementById("matrixOverlay").style.display = "flex";
+        document.body.style.overflow = 'hidden';
     }
 
     function closeMatrixPopup() {
         document.getElementById("matrixOverlay").style.display = "none";
+        document.body.style.overflow = '';
     }
 
     function openHistoryPopup(studentName) {
@@ -1642,10 +1644,12 @@
         });
       }
       document.getElementById("historyOverlay").style.display = "flex";
+      document.body.style.overflow = 'hidden';
     }
 
     function closeHistoryPopup() {
       document.getElementById("historyOverlay").style.display = "none";
+      document.body.style.overflow = '';
     }
 
     window.addEventListener('scroll', function() {
