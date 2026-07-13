@@ -301,11 +301,11 @@
 
     @media screen and (max-width: 1024px) {
       .main-container { flex-direction: column; height: auto; min-height: auto; }
-      /* 🟢 모바일에서 좌/우 패널의 강제 전체 높이를 해제하여 하단 잉여 공백 완벽 제거 */
-      .left-panel, .right-panel { flex: 0 0 100%; max-width: 100%; min-height: auto !important; }
+      /* 🟢 flex 속성을 해제하고 명시적으로 width를 100%로 주어 너비 쪼그라듦 방지 */
+      .left-panel, .right-panel { flex: none !important; width: 100%; max-width: 100%; min-height: auto !important; }
       .right-panel { border-left: none; border-top: 4px solid #1366ce; margin-top: 10px; position: static; max-height: none; }
       .table-fixed-wrapper { max-height: none; }
-      /* 🟢 모바일 화면 크기에 맞게 점선 빈 박스의 높이를 아담하게 150px로 조율 */
+      /* 🟢 모바일 화면 크기에 맞게 점선 빈 박스의 높이를 아담하게 조율 */
       .empty-state { min-height: 150px !important; }
     }
   </style>
