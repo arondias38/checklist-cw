@@ -513,7 +513,7 @@
     <a id="teacherLink" href="#" style="color:#ffffff; text-decoration:none; font-size:14px;" onclick="handleTeacherLinkClick(event)">⬅️ 선생님 모드로 돌아가기</a>
   </div>
 
-  <div style="position: absolute; right: 25px; margin-top: 6px; font-size: 11px; color: #adb5bd; font-family: 'Pretendard', sans-serif; letter-spacing: 0.5px; z-index: 10;">v.26.07.13-01</div>
+  <div style="position: absolute; right: 25px; margin-top: 6px; font-size: 11px; color: #adb5bd; font-family: 'Pretendard', sans-serif; letter-spacing: 0.5px; z-index: 10;">v.26.07.20-01</div>
 
   <div class="app-body">
     <div class="header-bar">
@@ -981,9 +981,12 @@
              let textContent = '';
              if (g.summary.isNoClass) {
                  textContent = `<span style="color:#adb5bd; font-weight:normal;">해당 없음</span>`;
+             } else if (g.summary.isHolidayEmpty) { // 🟢 NEW: 공휴일이면서 비어있을 때 (검은색 텍스트 표기)
+                 textContent = `<span style="color:#333; font-weight:900;">${g.summary.holidayName}</span>`;
              } else if (g.summary.isMissingComplete) {
                  textContent = `<span class="t-alert">검토 요망</span>`;
              } else {
+                 // ... 이하 기존 퍼센트 계산 로직 동일 ...
                  let s = g.summary;
                  let subjPct = s.classCount > 0 ? Math.min(100, Math.round((s.subjectCount / s.classCount) * 100)) : 0;
                  let sentPct = s.totalStudents > 0 ? Math.min(100, Math.round((s.totalSent / s.totalStudents) * 100)) : 100;
@@ -1017,7 +1020,7 @@
           document.getElementById("summaryBanner").innerHTML = summaryHtml;
 
           res.forEach(group => {
-             if (group.summary.isNoClass || group.summary.isMissingComplete) return;
+             if (group.summary.isNoClass || group.summary.isMissingComplete || group.summary.isHolidayEmpty) return;
              
              let html = `<div class="teacher-group"><div class="teacher-header">📌 담임명: ${group.teacher}</div>`;
              
@@ -1046,7 +1049,8 @@
              content.innerHTML += html;
           });
           
-          let hasData = res.some(g => !g.summary.isNoClass && !g.summary.isMissingComplete);
+          // 🟢 변경: 공휴일 비어있음(isHolidayEmpty) 조건 추가
+          let hasData = res.some(g => !g.summary.isNoClass && !g.summary.isMissingComplete && !g.summary.isHolidayEmpty);
           if(hasData) {
              document.getElementById("saveBtn").style.display = "inline-flex";
              document.getElementById("globalCheckLabel").style.display = "flex";
