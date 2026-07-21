@@ -1036,7 +1036,7 @@
                     
                     let displaySubject = r.subject ? r.subject.replace(/\n/g, ' ↵ ') : '-';
                     let displayNoteStr = r.note ? r.note.replace(/\n/g, ' ↵ ') : '-';
-                    let noteHtml = r.sendCheck === false && r.note === "퇴원" ? `<div class="readonly-text" style="color:#dc3545; font-weight:bold;">퇴원</div>` : `<div class="readonly-note">${displayNoteStr}</div>`;
+                    let noteHtml = r.sendCheck === false && r.note === "퇴원/전반" ? `<div class="readonly-text" style="color:#dc3545; font-weight:bold;">퇴원/전반</div>` : `<div class="readonly-note">${displayNoteStr}</div>`;
                     
                     let searchIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="cursor:pointer; color:#555;" onclick="openHistoryPopup('${group.teacher}', '${clsName}', '${r.studentName}')" title="기록 보기"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>`;
                     
