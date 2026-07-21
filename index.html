@@ -210,7 +210,7 @@
     }
     .btn-roster-add-main { background-color: #28a745; }
     .btn-roster-delete-main { background-color: #dc3545; }
-    .btn-roster-add-main:hover, .btn-roster-delete-main:hover, .btn-roster-delete-main.active { max-width: 120px; padding-right: 18px; }
+    .btn-roster-add-main:hover, .btn-roster-delete-main:hover, .btn-roster-delete-main.active { max-width: 145px; padding-right: 18px; }
     .btn-roster-delete-main.active { background-color: #8b0000; box-shadow: inset 0 3px 5px rgba(0,0,0,0.2); }
 
     .btn-icon-wrap { width: 38px; height: 38px; display: inline-flex; justify-content: center; align-items: center; flex-shrink: 0; font-style: normal; font-size: 1.4em; font-weight: 900; line-height: 0; padding-bottom: 2px; }
@@ -374,7 +374,7 @@
     <a id="adminLink" href="#" oncontextmenu="return false;" style="color:#a0bfdc; text-decoration:none; font-size:12px; font-weight:normal; user-select:none; -webkit-user-select:none; cursor:pointer;" onclick="if(checkLockdown(event)) return false; promptAdminCode(event);">⚙️ 관리자</a>
   </div>
 
-  <div style="position: absolute; right: 25px; margin-top: 6px; font-size: 11px; color: #adb5bd; font-family: 'Pretendard', sans-serif; letter-spacing: 0.5px; z-index: 10;">v.26.07.20-01</div>
+  <div style="position: absolute; right: 25px; margin-top: 6px; font-size: 11px; color: #adb5bd; font-family: 'Pretendard', sans-serif; letter-spacing: 0.5px; z-index: 10;">v.26.07.21-01</div>
 
   <div class="app-body">
     <div class="header-bar">
@@ -457,7 +457,7 @@
           <div class="bottom-controls">
             <div class="left-controls">
               <button class="btn-roster-add-main" onclick="addNewStudentRow()"><span class="btn-icon-wrap">&plus;</span><span class="btn-text-wrap">신입추가</span></button>
-              <button class="btn-roster-delete-main" id="deleteModeBtn" onclick="toggleDeleteMode()"><span class="btn-icon-wrap">&minus;</span><span class="btn-text-wrap">퇴원삭제</span></button>
+              <button class="btn-roster-delete-main" id="deleteModeBtn" onclick="toggleDeleteMode()"><span class="btn-icon-wrap">&minus;</span><span class="btn-text-wrap">퇴원/전반 삭제</span></button>
             </div>
             <button class="btn-save-master" id="saveBtn" onclick="saveData()">
               <div style="display:flex; align-items:center; justify-content:center; line-height: 1; margin-top: 9px;">
@@ -1071,9 +1071,9 @@
            noColumn = `<span style="color:#28a745; font-weight:bold; font-size:11px;">NEW</span>`; 
         } else if (isDeleteMode) { 
            if (st.isDischarged || st.pendingDischarge) {
-               noColumn = `<button class="btn-discharge-plus" onclick="triggerRestoreStudent(${idx}, '${st.name}')" title="퇴원 복구"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg></button>`;
+               noColumn = `<button class="btn-discharge-plus" onclick="triggerRestoreStudent(${idx}, '${st.name}')" title="퇴원/전반 복구"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg></button>`;
            } else {
-               noColumn = `<button class="btn-discharge-minus" onclick="triggerDischargeStudent(${idx}, '${st.name}')" title="퇴원생 처리"><span class="minus-text-gly">&minus;</span></button> `; 
+               noColumn = `<button class="btn-discharge-minus" onclick="triggerDischargeStudent(${idx}, '${st.name}')" title="퇴원/전반 처리"><span class="minus-text-gly">&minus;</span></button> `; 
            }
         } else { 
            noColumn = String(idx + 1).padStart(2, '0'); 
@@ -1098,7 +1098,7 @@
         if (st.isDischarged || st.pendingDischarge) {
           s1 = `<input type="text" class="input-mini" disabled>`; s2 = `<input type="text" class="input-mini" disabled>`;
           s3 = `<input type="text" class="input-mini" disabled>`; s4 = `<input type="text" class="input-mini" disabled>`;
-          noteInputHtml = `<textarea class="note-textarea" disabled>퇴원</textarea>`;
+          noteInputHtml = `<textarea class="note-textarea" disabled>퇴원/전반</textarea>`;
         }
         let disabledAttr = (st.isDischarged || st.pendingDischarge) ? "disabled" : "";
 
@@ -1332,8 +1332,8 @@
     function triggerDischargeStudent(idx, sName) {
       const dateVal = document.getElementById("dateInput").value;
       const fDate = formatDateWithDay(dateVal);
-      showCustomConfirm(`<b>${sName}</b> 학생을 ${fDate} 기준으로<br>퇴원(명단 제외) 처리하시겠습니까?`, function() {
-        studentList[idx].note = "퇴원"; 
+      showCustomConfirm(`<b>${sName}</b> 학생을 ${fDate} 기준으로<br>퇴원/전반(명단 제외) 처리하시겠습니까?`, function() {
+        studentList[idx].note = "퇴원/전반"; 
         studentList[idx].sendCheck = false; 
         studentList[idx].leadCheck = false; 
         studentList[idx].pendingDischarge = true; 
@@ -1345,7 +1345,7 @@
     }
 
     function triggerRestoreStudent(idx, sName) {
-      showCustomConfirm(`<b>${sName}</b> 학생을 퇴원 상태에서<br>복구하시겠습니까?`, function() {
+      showCustomConfirm(`<b>${sName}</b> 학생을 퇴원/전반 상태에서<br>복구하시겠습니까?`, function() {
         studentList[idx].note = ""; 
         studentList[idx].pendingDischarge = false; 
         studentList[idx].pendingRestore = true; 
