@@ -253,7 +253,7 @@
 
     .left-panel, .main-container { position: relative; } 
     .easter-egg-zone { position: absolute; bottom: 0; left: 0; width: 25px; height: 25px; z-index: 50; cursor: default; }
-    .egg-bubble { position: absolute; bottom: 35px; left: 15px; background-color: #1a3978; color: white; padding: 12px 18px; border-radius: 12px; font-size: 14px; font-weight: 900; box-shadow: 0 4px 10px rgba(0,0,0,0.2); opacity: 0; transform: translateY(10px); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); pointer-events: none; z-index: 1000; white-space: nowrap; }
+    .egg-bubble { position: absolute; bottom: 35px; left: 15px; background-color: #1a3978; color: white; padding: 12px 18px; border-radius: 12px; font-size: 14px; font-weight: 900; box-shadow: 0 4px 10px rgba(0,0,0,0.2); opacity: 0; transform: translateY(10px); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); pointer-events: none; z-index: 10003; white-space: nowrap; }
     .egg-bubble::after { content: ''; position: absolute; bottom: -8px; left: 15px; border-width: 8px 8px 0; border-style: solid; border-color: #1a3978 transparent transparent transparent; }
     .egg-bubble.show { opacity: 1; transform: translateY(0); } 
 
@@ -432,7 +432,7 @@
       <div class="left-panel">
 
         <div class="easter-egg-zone" onclick="triggerEasterEgg()"></div>
-        <div class="egg-bubble" id="eggBubble">🎉 오늘도 화이팅!!!</div>
+        <div class="egg-bubble" id="eggBubble">🎉 해피버스데이 투 유~🎵</div>
 
         <div class="dashboard-banner" id="metaDashboard">
           <div class="db-grid">
